@@ -1,3 +1,4 @@
+const RAG_BACKEND_URL = "http://localhost:8000/chat";
 const OPENROUTER_API_KEY = "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";
 
 export interface Message {
@@ -17,6 +18,33 @@ const SYSTEM_PROMPT = `أنت "سكينة AI" (Sakina AI)، رفيق وتطبي�
 6. إذا كان المستخدم يمر بأزمة شديدة أو أفكار خطيرة، كرر دعمك العاطفي وانصحه بلطف بالتواصل مع مختص أو خط مساعدة نفسي.`;
 
 export async function sendChatMessage(messagesHistory: { isAi: boolean; textEn: string; textAr: string }[], userLanguage: string): Promise<string> {
+  const lastUserMsg = messagesHistory.filter(m => !m.isAi).pop();
+  const userText = lastUserMsg ? (userLanguage === 'ar' ? (lastUserMsg.textAr || lastUserMsg.textEn) : (lastUserMsg.textEn || lastUserMsg.textAr)) : "";
+
+  // 1. Try Python RAG Backend First
+  if (userText.trim()) {
+    try {
+      const ragResponse = await fetch(RAG_BACKEND_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: userText })
+      });
+
+      if (ragResponse.ok) {
+        const ragData = await ragResponse.json();
+        if (ragData.answer && ragData.answer.trim()) {
+          console.log("🟢 RAG Backend Response received:", ragData);
+          return ragData.answer;
+        }
+      }
+    } catch (ragError) {
+      console.warn("⚠️ Python RAG Backend not responding, falling back to direct OpenRouter AI...", ragError);
+    }
+  }
+
+  // 2. Direct OpenRouter API Fallback
   const formattedMessages: Message[] = [
     { role: 'system', content: SYSTEM_PROMPT },
     ...messagesHistory.map(msg => ({
