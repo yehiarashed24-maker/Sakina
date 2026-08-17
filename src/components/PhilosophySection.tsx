@@ -4,7 +4,9 @@ import TiltCard from './TiltCard';
 import BackgroundVideo from './BackgroundVideo';
 import { useLanguage } from '../context/LanguageContext';
 
-const philosophyVideo = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4";
+import brainVideo from '../assets/129921-746164346.mp4';
+
+const philosophyVideo = brainVideo;
 
 export default function PhilosophySection() {
   const ref = useRef(null);

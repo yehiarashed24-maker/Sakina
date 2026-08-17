@@ -23,6 +23,18 @@ export default function MessageBubble({ text, isAi, lang = 'ar' }: MessageProps)
     }
   };
 
+  const renderFormattedText = (rawText?: string) => {
+    if (!rawText) return null;
+    
+    // Parse basic markdown: bold (**text**) and links ([text](url))
+    const html = rawText
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 decoration-white/30 hover:decoration-cyan-400/50 transition-all font-semibold">$1</a>')
+      .replace(/\n/g, '<br />');
+      
+    return <div dangerouslySetInnerHTML={{ __html: html }} className="leading-relaxed" />;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -36,7 +48,7 @@ export default function MessageBubble({ text, isAi, lang = 'ar' }: MessageProps)
             : 'bg-white text-black font-medium rounded-3xl rounded-tr-sm'
         }`}
       >
-        <p className="whitespace-pre-line">{text}</p>
+        {renderFormattedText(text)}
 
         {isAi && (
           <button

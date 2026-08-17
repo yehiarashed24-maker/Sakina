@@ -17,7 +17,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.staticfiles import StaticFiles
+import os
+
 app.include_router(chat_router)
+
+# Serve PDFs directory
+pdf_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "knowledge", "pdfs")
+if os.path.exists(pdf_dir):
+    app.mount("/pdfs", StaticFiles(directory=pdf_dir), name="pdfs")
 
 @app.get("/")
 def root():

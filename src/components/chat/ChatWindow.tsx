@@ -12,28 +12,18 @@ export default function ChatWindow() {
   const { lang } = useLanguage();
   const { messages, sendMessage, isTyping } = useChatContext();
   const [input, setInput] = useState('');
-  const [activeStep, setActiveStep] = useState(0);
   const [isVoiceCallOpen, setIsVoiceCallOpen] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping, activeStep]);
-
-  useEffect(() => {
-    let interval: any;
-    if (isTyping) {
-      setActiveStep(0);
-      interval = setInterval(() => {
-        setActiveStep(prev => (prev < 3 ? prev + 1 : prev));
-      }, 700);
-    } else {
-      setActiveStep(0);
-    }
-    return () => clearInterval(interval);
-  }, [isTyping]);
+    // Only scroll when messages change or typing state toggles, with a slight delay for DOM to paint
+    const timeoutId = setTimeout(() => {
+      endRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+    return () => clearTimeout(timeoutId);
+  }, [messages, isTyping]);
 
   // Robust Text-to-Speech function for Safari/Chrome on Mac
   const speakResponse = useCallback((text: string) => {
@@ -103,7 +93,7 @@ export default function ChatWindow() {
               <img src="/sakina-logo.png" alt="Sakina AI" className="w-10 h-10 rounded-full object-cover border border-white/20" />
               <div className="flex flex-col">
                 <span className={`text-3xl tracking-tight text-white ${lang === 'en' ? 'font-instrument italic' : 'font-semibold'}`}>
-                  Sakina AI <span className="text-sm font-sans text-white/50 ml-2 not-italic">سكينة</span>
+                  Sakina AI <span className="text-sm font-sans text-white/50 ml-2 not-italic">سَكِينَة</span>
                 </span>
                 <span className="text-xs text-white/40 mt-1 uppercase tracking-widest font-mono">
                   AI Mental Wellness Companion
@@ -159,7 +149,7 @@ export default function ChatWindow() {
               ))}
               {isTyping && (
                 <div className="w-full flex justify-start">
-                  <AIThinking activeStep={activeStep} />
+                  <AIThinking />
                 </div>
               )}
             </AnimatePresence>

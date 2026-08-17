@@ -6,8 +6,13 @@ from app.llm.openrouter import generate_sakina_response
 
 router = APIRouter()
 
+class ChatMessageInput(BaseModel):
+    role: str
+    content: str
+
 class ChatRequest(BaseModel):
     message: str
+    history: List[ChatMessageInput] = []
 
 class SourceItem(BaseModel):
     source: str
@@ -28,7 +33,9 @@ async def chat_endpoint(request: ChatRequest):
         context_text, sources = retrieve_relevant_context(request.message, k=4)
         
         # 2. Generate response via OpenRouter LLM with Sakina personality prompt & anti-hallucination citations
-        answer = await generate_sakina_response(request.message, context_text, sources)
+        # Convert history objects to dicts
+        history_dicts = [{"role": msg.role, "content": msg.content} for msg in request.history]
+        answer = await generate_sakina_response(request.message, context_text, sources, history=history_dicts)
         
         return ChatResponse(
             answer=answer,

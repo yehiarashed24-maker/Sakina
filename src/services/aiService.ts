@@ -29,7 +29,13 @@ export async function sendChatMessage(messagesHistory: { isAi: boolean; textEn: 
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ message: userText })
+        body: JSON.stringify({ 
+          message: userText,
+          history: messagesHistory.map(msg => ({
+            role: msg.isAi ? 'assistant' : 'user',
+            content: userLanguage === 'ar' ? (msg.textAr || msg.textEn) : (msg.textEn || msg.textAr)
+          }))
+        })
       });
 
       if (ragResponse.ok) {

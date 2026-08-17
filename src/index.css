@@ -1,15 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-instrument: "Instrument Serif", serif;
-  --font-arabic: "Almarai", sans-serif;
+  --font-arabic: "Cairo", sans-serif;
 }
 
 @layer base {
   body {
     @apply bg-black text-white antialiased;
+  }
+  
+  :lang(ar), [dir="rtl"], .font-arabic {
+    font-family: 'Cairo', sans-serif !important;
   }
   
   /* Force hide ALL Safari native video controls even if paused */

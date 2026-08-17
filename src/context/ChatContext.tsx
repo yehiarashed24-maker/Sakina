@@ -32,6 +32,7 @@ interface ChatContextType {
   mood: MoodState;
   startNewConversation: () => void;
   switchConversation: (id: number) => void;
+  deleteConversation: (id: number) => void;
   sendMessage: (text: string, lang: 'en' | 'ar', sendApiCall: (history: ChatMessage[], lang: string) => Promise<string>) => Promise<void>;
   isTyping: boolean;
 }
@@ -208,7 +209,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       const savedId = localStorage.getItem('sakina_active_id_v3');
       if (savedId) {
         const num = Number(savedId);
-        if (!isNaN(num)) return num;
+        if (!isNaN(num)) {
+          const exists = conversations.some(c => c.id === num);
+          if (exists) return num;
+        }
       }
     } catch (e) {
       console.error("Failed to load active conv id:", e);
@@ -254,12 +258,41 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setActiveConvId(id);
   }, []);
 
+  const deleteConversation = useCallback((id: number) => {
+    setConversations(prev => {
+      const filtered = prev.filter(c => c.id !== id);
+      if (filtered.length === 0) {
+        // If all are deleted, create a new one
+        const newId = Date.now();
+        const newConv: Conversation = {
+          id: newId,
+          title: 'New Conversation',
+          titleAr: 'محادثة جديدة',
+          time: 'Just now',
+          messages: [defaultWelcomeMessage],
+          mood: zeroMood
+        };
+        setActiveConvId(newId);
+        return [newConv];
+      }
+      
+      // If we deleted the active one, switch to the first available
+      if (id === activeConvId) {
+        setActiveConvId(filtered[0].id);
+      }
+      return filtered;
+    });
+  }, [activeConvId]);
+
+
   const sendMessage = useCallback(async (
     text: string, 
     lang: 'en' | 'ar', 
     sendApiCall: (history: ChatMessage[], lang: string) => Promise<string>
   ) => {
     if (!text.trim() || isTyping) return;
+
+    const targetId = activeConversation.id;
 
     const userMsg: ChatMessage = {
       id: Date.now(),
@@ -270,7 +303,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     // Append user message immediately
     setConversations(prev => prev.map(c => {
-      if (c.id !== activeConvId) return c;
+      if (c.id !== targetId) return c;
       const newMsgs = [...c.messages, userMsg];
       const newTitle = c.messages.filter(m => !m.isAi).length === 0
         ? (text.length > 28 ? text.slice(0, 28) + '...' : text)
@@ -288,8 +321,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     try {
       // Get latest context
-      const currentConv = conversations.find(c => c.id === activeConvId);
-      const currentMsgs = currentConv ? [...currentConv.messages, userMsg] : [userMsg];
+      const currentMsgs = [...activeConversation.messages, userMsg];
 
       const aiReply = await sendApiCall(currentMsgs, lang);
 
@@ -301,7 +333,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       };
 
       setConversations(prev => prev.map(c => {
-        if (c.id !== activeConvId) return c;
+        if (c.id !== targetId) return c;
         const newMsgs = [...c.messages, aiMsg];
         return {
           ...c,
@@ -314,7 +346,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsTyping(false);
     }
-  }, [activeConvId, conversations, isTyping]);
+  }, [activeConversation, isTyping]);
 
   return (
     <ChatContext.Provider value={{
@@ -325,6 +357,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       mood: activeConversation.mood || zeroMood,
       startNewConversation,
       switchConversation,
+      deleteConversation,
       sendMessage,
       isTyping
     }}>

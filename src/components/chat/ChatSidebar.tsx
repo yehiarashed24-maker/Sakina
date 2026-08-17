@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import MoodTracker from './MoodTracker';
 import { useLanguage } from '../../context/LanguageContext';
@@ -7,7 +7,7 @@ import { useChatContext } from '../../context/ChatContext';
 
 export default function ChatSidebar() {
   const { t, lang } = useLanguage();
-  const { conversations, activeConvId, startNewConversation, switchConversation } = useChatContext();
+  const { conversations, activeConvId, startNewConversation, switchConversation, deleteConversation } = useChatContext();
 
   return (
     <aside className="w-[340px] hidden lg:flex flex-col border-r border-white/5 relative z-10 liquid-glass m-6 mr-3 rounded-[40px] shadow-2xl backdrop-blur-xl bg-white/[0.01]">
@@ -43,18 +43,32 @@ export default function ChatSidebar() {
               key={conv.id}
               whileHover={{ x: 4 }}
               onClick={() => switchConversation(conv.id)}
-              className={`p-4 rounded-2xl transition-colors cursor-pointer border flex flex-col gap-1.5 group ${
+              className={`p-4 rounded-2xl transition-colors cursor-pointer border flex items-center justify-between group ${
                 conv.id === activeConvId
                   ? 'bg-white/10 border-white/10'
                   : 'hover:bg-white/5 border-transparent hover:border-white/5'
               }`}
             >
-              <p className={`text-sm font-medium transition-colors ${
-                conv.id === activeConvId ? 'text-white' : 'text-white/70 group-hover:text-white'
-              }`}>
-                {lang === 'ar' && conv.titleAr ? conv.titleAr : conv.title}
-              </p>
-              <p className="text-xs text-white/30">{conv.time}</p>
+              <div className="flex flex-col gap-1.5 overflow-hidden pr-2">
+                <p className={`text-sm font-medium transition-colors truncate ${
+                  conv.id === activeConvId ? 'text-white' : 'text-white/70 group-hover:text-white'
+                }`}>
+                  {lang === 'ar' && conv.titleAr ? conv.titleAr : conv.title}
+                </p>
+                <p className="text-xs text-white/30">{conv.time}</p>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteConversation(conv.id);
+                }}
+                className={`p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/20 text-white/40 hover:text-red-400 ${
+                  conv.id === activeConvId ? 'opacity-100' : ''
+                }`}
+                title={lang === 'ar' ? 'حذف المحادثة' : 'Delete Chat'}
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </motion.div>
           ))}
         </div>
