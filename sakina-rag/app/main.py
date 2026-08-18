@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.chat import router as chat_router
+from app.api.auth import router as auth_router
+from app.api.history import router as history_router
+from fastapi.staticfiles import StaticFiles
+import os
 
 app = FastAPI(
     title="Sakina AI RAG Backend",
@@ -17,10 +21,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from fastapi.staticfiles import StaticFiles
-import os
-
 app.include_router(chat_router)
+app.include_router(auth_router)
+app.include_router(history_router)
 
 # Serve PDFs directory
 pdf_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "knowledge", "pdfs")

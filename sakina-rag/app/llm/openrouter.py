@@ -1,4 +1,5 @@
 import httpx
+import re
 from typing import List, Dict, Any
 from app.config import settings
 from app.prompts.sakina_prompt import SAKINA_SYSTEM_PROMPT
@@ -35,7 +36,7 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
         question=query
     )
     
-    gemini_api_key = getattr(settings, "GEMINI_API_KEY", "AQ.Ab8RN6Jj_1zk97ZM25E_iO7vmcUE22v-ZuTLQXiWGrMOnBTzUg")
+    gemini_api_key = getattr(settings, "GEMINI_API_KEY", "AQ.Ab8RN6IJu-ehdSInfdiXukBliLoIl4ewcTpC6RolvCbnch3JCw")
     openrouter_api_key = getattr(settings, "OPENROUTER_API_KEY", "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")
 
     candidate_endpoints = [
@@ -76,7 +77,6 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
                 messages.append({"role": msg["role"], "content": clean_content})
     
     # Analyze query language to enforce strict output language
-    import re
     eng_chars = len(re.findall(r'[a-zA-Z]', query))
     ar_chars = len(re.findall(r'[\u0600-\u06FF]', query))
     
@@ -91,7 +91,7 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
 
     reply = ""
     # Try endpoints one by one
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    async with httpx.AsyncClient(timeout=15.0) as client:
         for ep in candidate_endpoints:
             payload = {
                 "model": ep["model"],
@@ -110,7 +110,6 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
                     raw_reply = data["choices"][0]["message"]["content"]
                     
                     # Clean out thinking blocks
-                    import re
                     clean_reply = re.sub(r'<think>.*?</think>', '', raw_reply, flags=re.DOTALL)
                     
                     if "Here's a thinking process" in clean_reply:

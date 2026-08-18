@@ -73,8 +73,19 @@ export default function ChatSidebar() {
           ))}
         </div>
 
-        <div className="mt-auto pt-8">
+        <div className="mt-auto pt-8 flex flex-col gap-4">
           <MoodTracker />
+          <button
+            onClick={() => {
+                localStorage.removeItem('sakina_token');
+                localStorage.removeItem('sakina_user');
+                localStorage.removeItem('sakina_active_id_v3');
+                window.location.href = '/';
+            }}
+            className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white rounded-2xl py-3 transition-all text-sm font-medium flex items-center justify-center gap-2"
+          >
+            {lang === 'ar' ? 'تسجيل الخروج' : 'Sign Out'}
+          </button>
         </div>
       </div>
     </aside>
