@@ -26,8 +26,11 @@ export default function MessageBubble({ text, isAi, lang = 'ar' }: MessageProps)
   const renderFormattedText = (rawText?: string) => {
     if (!rawText) return null;
     
-    // Parse basic markdown: bold (**text**) and links ([text](url))
+    // Parse basic markdown: headers (###), bold (**text**), and links ([text](url))
     const html = rawText
+      .replace(/###\s+(.*)/g, '<strong class="text-lg font-bold text-white mt-4 mb-2 block">$1</strong>')
+      .replace(/##\s+(.*)/g, '<strong class="text-xl font-bold text-white mt-4 mb-2 block">$1</strong>')
+      .replace(/#\s+(.*)/g, '<strong class="text-2xl font-bold text-white mt-4 mb-2 block">$1</strong>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 decoration-white/30 hover:decoration-cyan-400/50 transition-all font-semibold">$1</a>')
       .replace(/\n/g, '<br />');
