@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Mic } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import MessageBubble from './MessageBubble';
 import AIThinking from './AIThinking';
@@ -73,7 +73,6 @@ export default function ChatWindow() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend(input)}
             />
-            <MicButton lang={lang} onResult={(t) => setInput(p => (p ? p + ' ' : '') + t)} />
             <button
               onClick={() => handleSend(input)}
               disabled={isTyping || !input.trim()}
@@ -85,86 +84,5 @@ export default function ChatWindow() {
         </div>
       </div>
     </section>
-  );
-}
-
-// ── Mic Button — uses browser's built-in Speech Recognition (no API needed) ──
-function MicButton({ lang, onResult }: { lang: string; onResult: (text: string) => void }) {
-  const [listening, setListening] = useState(false);
-  const recRef = useRef<any>(null);
-
-  const toggle = () => {
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (!SR) {
-      alert(lang === 'ar'
-        ? 'الميكروفون يعمل على Chrome فقط. يرجى استخدام Chrome.'
-        : 'Speech input only works on Chrome. Please use Chrome.');
-      return;
-    }
-
-    // Stop if already listening
-    if (listening) {
-      recRef.current?.abort();
-      setListening(false);
-      return;
-    }
-
-    const rec = new SR();
-    rec.lang = lang === 'ar' ? 'ar-SA' : 'en-US';
-    rec.continuous = true;       // keep going until user clicks stop
-    rec.interimResults = true;   // show partial results
-
-    let finalTranscript = '';
-
-    rec.onstart = () => setListening(true);
-
-    rec.onresult = (e: any) => {
-      let interim = '';
-      finalTranscript = '';
-      for (let i = 0; i < e.results.length; i++) {
-        if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript;
-        else interim += e.results[i][0].transcript;
-      }
-    };
-
-    rec.onend = () => {
-      setListening(false);
-      const text = finalTranscript.trim();
-      if (text) onResult(text);
-    };
-
-    rec.onerror = (e: any) => {
-      console.error('STT:', e.error);
-      setListening(false);
-    };
-
-    recRef.current = rec;
-    rec.start();
-  };
-
-  return (
-    <div className="relative">
-      {listening && (
-        <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] font-bold text-red-300 whitespace-nowrap animate-pulse">
-          {lang === 'ar' ? '● يسجل' : '● Recording'}
-        </span>
-      )}
-      <button
-        type="button"
-        onClick={toggle}
-        title={listening
-          ? (lang === 'ar' ? 'اضغط لإيقاف التسجيل' : 'Click to stop')
-          : (lang === 'ar' ? 'اضغط للكلام' : 'Click to speak')}
-        className={`relative p-3.5 rounded-full border transition-all ${
-          listening
-            ? 'bg-red-500/40 border-red-400 shadow-[0_0_18px_rgba(239,68,68,0.6)]'
-            : 'bg-blue-500/20 border-blue-400/40 hover:bg-blue-500/40 hover:scale-110'
-        }`}
-      >
-        {listening && <span className="absolute inset-0 rounded-full border-2 border-red-400 animate-ping opacity-60" />}
-        <Mic className={`w-5 h-5 relative z-10 ${listening ? 'text-red-300 animate-pulse' : 'text-cyan-300'}`} />
-      </button>
-    </div>
   );
 }
