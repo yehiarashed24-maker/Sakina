@@ -8,6 +8,7 @@ import ServicesSection from './components/ServicesSection';
 import CTASection from './components/CTASection';
 import Footer from './components/Footer';
 import ChatPage from './components/ChatPage';
+import ContactPage from './pages/ContactPage';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { ChatProvider } from './context/ChatContext';
 
@@ -37,6 +38,7 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/chat" element={<ChatPage />} />
+            <Route path="/contact" element={<ContactPage />} />
           </Routes>
         </Router>
       </ChatProvider>

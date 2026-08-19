@@ -62,7 +62,7 @@ export default function HeroSection() {
             <div className="hidden md:flex items-center gap-8 ml-8">
               <Link to="/pricing" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('pricing')}</Link>
               <Link to="/about" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('about')}</Link>
-              <a href="#" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('contact')}</a>
+              <Link to="/contact" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('contact')}</Link>
             </div>
           </div>
           
