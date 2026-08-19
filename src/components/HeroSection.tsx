@@ -62,6 +62,7 @@ export default function HeroSection() {
             <div className="hidden md:flex items-center gap-8 ml-8">
               <Link to="/pricing" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('pricing')}</Link>
               <Link to="/about" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('about')}</Link>
+              <a href="#" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('contact')}</a>
             </div>
           </div>
           
@@ -143,18 +144,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Social Icons Footer */}
-      <div className="relative z-10 flex justify-center gap-4 pb-12 mt-auto">
-        <a href="#" className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all">
-          <Mail className="w-5 h-5" />
-        </a>
-        <a href="#" className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all">
-          <MessageSquare className="w-5 h-5" />
-        </a>
-        <a href="#" className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all">
-          <Globe className="w-5 h-5" />
-        </a>
-      </div>
+
     </section>
   );
 }
