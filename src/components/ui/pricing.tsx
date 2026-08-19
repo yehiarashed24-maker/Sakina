@@ -263,7 +263,7 @@ export function PricingSection({
       >
         <InteractiveStarfield
           mousePosition={mousePosition}
-          containerRef={containerRef}
+          containerRef={containerRef as React.RefObject<HTMLDivElement>}
         />
         <div className="relative z-10 container mx-auto px-4 md:px-6">
           <div className="max-w-3xl mx-auto text-center space-y-4 mb-12 mt-10">

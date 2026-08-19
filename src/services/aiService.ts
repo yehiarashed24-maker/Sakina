@@ -1,5 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const RAG_BACKEND_URL = `${API_BASE_URL}/chat`;
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
+const RAG_BACKEND_URL = `${API_BASE_URL}/api/chat`;
 
 export interface Message {
   role: 'user' | 'assistant' | 'system';

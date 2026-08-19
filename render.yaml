@@ -1,30 +1,15 @@
 services:
-  # Backend FastAPI Service
+  # Unified Web Service (FastAPI + React)
   - type: web
-    name: sakina-api
+    name: sakina-ai-unified
     env: python
-    buildCommand: "cd sakina-rag && pip install -r requirements.txt"
+    buildCommand: "npm install && npm run build && cd sakina-rag && pip install -r requirements.txt"
     startCommand: "cd sakina-rag && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
-      - key: ALLOWED_ORIGINS
-        fromService:
-          type: web
-          name: sakina-ai
-          envVarKey: RENDER_EXTERNAL_URL
-      - key: BACKEND_URL
-        value: "https://sakina-api.onrender.com" # Fallback, Render doesn't natively allow referencing its own URL dynamically via fromService for itself, but actually they do via RENDER_EXTERNAL_URL directly in the env.
-
-  # Frontend Static Site
-  - type: web
-    name: sakina-ai
-    env: static
-    buildCommand: "npm install && npm run build"
-    staticPublishPath: "./dist"
-    envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: sakina-api
-          envVarKey: RENDER_EXTERNAL_URL
+        value: "" # Empty because API is on the same domain
+      # The following must be set in the Render Dashboard securely:
+      # - OPENROUTER_API_KEY
+      # - MONGODB_URI

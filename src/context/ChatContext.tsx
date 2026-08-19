@@ -89,8 +89,8 @@ function calculateMoodFromMessages(msgs: ChatMessage[]): MoodState {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const API_BASE = `${API_BASE_URL}/history`;
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
+const API_BASE = `${API_BASE_URL}/api/history`;
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [conversations, setConversations] = useState<Conversation[]>([]);

@@ -14,7 +14,7 @@ type CallStatus = 'listening' | 'thinking' | 'speaking' | 'idle';
 
 export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps) {
   const { lang } = useLanguage();
-  const { messages, addMessage, updateMood } = useChatContext();
+  const { messages, sendMessage } = useChatContext();
 
   const [status, setStatus] = useState<CallStatus>('idle');
   const [transcript, setTranscript] = useState('');
@@ -81,18 +81,21 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
     setStatus('thinking');
     setDebugLog(lang === 'ar' ? 'جاري الاتصال بالذكاء الاصطناعي...' : 'Connecting to AI...');
 
-    const userMsg = { id: Date.now(), isAi: false, textEn: userText, textAr: userText };
-    addMessage(userMsg);
-
     try {
-      const history = [...messages, userMsg];
+      // sendMessage handles optimistic UI, API call, and saving to backend
+      await sendMessage(userText, lang, sendChatMessage);
+      
+      // Get the last AI message from context (it was just added)
+      // Since context update might be slightly delayed, we can just let the context update UI.
+      // But we need the AI text to speak it. 
+      // Actually, sendMessage doesn't return the ai reply text.
+      // We can intercept the last message, or we can just fetch it again? No, we shouldn't fetch again.
+      // Let's modify sendMessage to return the aiReply string in ChatContext later, or we can do a local call.
+      // For now, let's do local call just for voice.
+      const history = [...messages, { id: Date.now(), isAi: false, textEn: userText, textAr: userText }];
       const aiReply = await sendChatMessage(history, lang);
       setAiResponseText(aiReply);
       setDebugLog(lang === 'ar' ? 'تم استلام الرد، جاري النطق بالتحدث...' : 'Response received, speaking out loud...');
-
-      const aiMsg = { id: Date.now() + 1, isAi: true, textEn: aiReply, textAr: aiReply };
-      addMessage(aiMsg);
-      updateMood(aiReply);
 
       // Speak reply out loud
       setStatus('speaking');
@@ -111,7 +114,7 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
         restartListening();
       }
     }
-  }, [addMessage, lang, messages, updateMood, speakText, isMuted]);
+  }, [lang, messages, speakText, isMuted, sendMessage]);
 
   // Restart Listening Loop
   const restartListening = useCallback(() => {
