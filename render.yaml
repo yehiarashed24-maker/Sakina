@@ -1,7 +1,7 @@
 services:
   # Backend FastAPI Service
   - type: web
-    name: sakina-backend
+    name: sakina-api
     env: python
     buildCommand: "cd sakina-rag && pip install -r requirements.txt"
     startCommand: "cd sakina-rag && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
@@ -11,14 +11,14 @@ services:
       - key: ALLOWED_ORIGINS
         fromService:
           type: web
-          name: sakina-frontend
+          name: sakina-ai
           envVarKey: RENDER_EXTERNAL_URL
       - key: BACKEND_URL
-        value: "https://sakina-backend.onrender.com" # Fallback, Render doesn't natively allow referencing its own URL dynamically via fromService for itself, but actually they do via RENDER_EXTERNAL_URL directly in the env.
+        value: "https://sakina-api.onrender.com" # Fallback, Render doesn't natively allow referencing its own URL dynamically via fromService for itself, but actually they do via RENDER_EXTERNAL_URL directly in the env.
 
   # Frontend Static Site
   - type: web
-    name: sakina-frontend
+    name: sakina-ai
     env: static
     buildCommand: "npm install && npm run build"
     staticPublishPath: "./dist"
@@ -26,5 +26,5 @@ services:
       - key: VITE_API_URL
         fromService:
           type: web
-          name: sakina-backend
+          name: sakina-api
           envVarKey: RENDER_EXTERNAL_URL
