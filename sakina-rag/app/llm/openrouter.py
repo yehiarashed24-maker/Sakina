@@ -160,14 +160,17 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
 
     # Manually append the clickable citation only if it's not a simple greeting and not a refusal
     if sources and not greeting_mode and not is_refusal:
-        first_src = sources[0]
-        src_name = first_src.get('source', 'mental_health_rag_kb.pdf')
-        src_page = first_src.get('page', 1)
-        src_topic = first_src.get('topic', 'الصحة النفسية')
-        
-        # Ensure we don't end up with duplicate slashes
         base_url = getattr(settings, 'BACKEND_URL', 'http://localhost:8000').rstrip('/')
-        citation = f"\n\n📚 **المرجع**: [{src_name} (صفحة {src_page} - {src_topic})]({base_url}/pdfs/{src_name})"
-        reply += citation
+        citation_lines = []
+        for src in sources:
+            src_name = src.get('source', 'mental_health_rag_kb.pdf')
+            src_page = src.get('page', 1)
+            cit_str = f"[{src_name} (صـ {src_page})]({base_url}/pdfs/{src_name})"
+            if cit_str not in citation_lines:
+                citation_lines.append(cit_str)
+        
+        if citation_lines:
+            citation = "\n\n📚 **المراجع**: " + " | ".join(citation_lines)
+            reply += citation
     
     return reply
