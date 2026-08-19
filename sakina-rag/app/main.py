@@ -81,9 +81,9 @@ if os.path.exists(frontend_dir):
     # Static files at root of dist (e.g., vite.svg, etc)
     @app.get("/{file_name:path}")
     async def serve_static_root(file_name: str):
+        from fastapi.responses import FileResponse
         file_path = os.path.join(frontend_dir, file_name)
         if os.path.isfile(file_path):
-            from fastapi.responses import FileResponse
             return FileResponse(file_path)
         
         # Fallback to index.html for SPA routing
