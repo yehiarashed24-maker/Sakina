@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { PrismaHero } from '../components/ui/prisma-hero';
 import { useLanguage } from '../context/LanguageContext';

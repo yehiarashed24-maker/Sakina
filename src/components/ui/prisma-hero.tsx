@@ -109,23 +109,16 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
         {/* Gradient overlay */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
 
-        {/* Navbar */}
-        <nav className="absolute left-1/2 top-0 z-20 -translate-x-1/2">
-          <div className="flex items-center gap-3 rounded-b-2xl bg-black px-4 py-2 sm:gap-6 md:gap-12 md:rounded-b-3xl md:px-8 lg:gap-14">
-            {navItems.map((item) => (
-              <Link
-                key={item}
-                to={`/${item.toLowerCase()}`}
-                className="text-[10px] transition-colors sm:text-xs md:text-sm"
-                style={{ color: "rgba(225, 224, 204, 0.8)" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#E1E0CC")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(225, 224, 204, 0.8)")}
-              >
-                {item}
-              </Link>
-            ))}
-          </div>
-        </nav>
+        {/* Back to Home Button */}
+        <div className="absolute left-6 top-6 z-20">
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:bg-white/10"
+          >
+            <ArrowRight className="w-4 h-4 rotate-180" />
+            <span className="text-sm font-medium">Back to Home</span>
+          </Link>
+        </div>
 
         {/* Hero content */}
         <div className="absolute bottom-0 left-0 right-0 px-4 pb-2 sm:px-6 md:px-10">
