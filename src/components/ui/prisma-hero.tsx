@@ -84,7 +84,11 @@ export const WordsPullUpMultiStyle = ({ segments, className = "", style }: Words
 /* ---------------- Hero ---------------- */
 const navItems = ["Features", "Pricing", "About", "Chat"];
 
-const PrismaHero = () => {
+interface PrismaHeroProps {
+  children?: React.ReactNode;
+}
+
+const PrismaHero = ({ children }: PrismaHeroProps) => {
   return (
     <section className="h-screen w-full">
       <div className="relative h-full w-full overflow-hidden rounded-2xl md:rounded-[2rem]">
@@ -148,20 +152,7 @@ const PrismaHero = () => {
                 Sakina is a private, AI-powered mental wellness companion. A safe space to understand your feelings and express your thoughts with empathy.
               </motion.p>
 
-              <motion.button
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="group inline-flex items-center gap-2 self-start rounded-full bg-white py-1 pl-5 pr-1 text-sm font-semibold text-black transition-all hover:gap-3 sm:text-base"
-              >
-                <Link to="/chat" className="flex items-center gap-2">
-                  Start Session
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-10 sm:w-10">
-                    <ArrowRight className="h-4 w-4" style={{ color: "#E1E0CC" }} />
-                  </span>
-                </Link>
-              </motion.button>
-
+              {children}
             </div>
           </div>
         </div>
