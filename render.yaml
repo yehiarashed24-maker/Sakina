@@ -8,7 +8,11 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
-      # You can add OPENROUTER_API_KEY, GEMINI_API_KEY via Render Dashboard
+      - key: ALLOWED_ORIGINS
+        fromService:
+          type: web
+          name: sakina-frontend
+          envVarKey: RENDER_EXTERNAL_URL
 
   # Frontend Static Site
   - type: web
