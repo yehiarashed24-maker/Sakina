@@ -1,4 +1,5 @@
-const RAG_BACKEND_URL = "http://localhost:8000/chat";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const RAG_BACKEND_URL = `${API_BASE_URL}/chat`;
 const OPENROUTER_API_KEY = "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";
 
 export interface Message {

@@ -1,0 +1,24 @@
+services:
+  # Backend FastAPI Service
+  - type: web
+    name: sakina-backend
+    env: python
+    buildCommand: "cd sakina-rag && pip install -r requirements.txt"
+    startCommand: "cd sakina-rag && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      # You can add OPENROUTER_API_KEY, GEMINI_API_KEY via Render Dashboard
+
+  # Frontend Static Site
+  - type: web
+    name: sakina-frontend
+    env: static
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "./dist"
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: sakina-backend
+          envVarKey: RENDER_EXTERNAL_URL

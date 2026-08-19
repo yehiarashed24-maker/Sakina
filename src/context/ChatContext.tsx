@@ -89,7 +89,8 @@ function calculateMoodFromMessages(msgs: ChatMessage[]): MoodState {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-const API_BASE = "http://localhost:8000/history";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE = `${API_BASE_URL}/history`;
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -134,6 +135,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     loadConversations();
+  }, [loadConversations]);
+
+  // Re-load when user logs in (triggered via custom event from HeroSection)
+  useEffect(() => {
+    const handleLogin = () => loadConversations();
+    window.addEventListener('sakina:login', handleLogin);
+    return () => window.removeEventListener('sakina:login', handleLogin);
   }, [loadConversations]);
 
   useEffect(() => {

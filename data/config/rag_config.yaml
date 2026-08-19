@@ -1,0 +1,28 @@
+paths:
+  raw_data: data/raw
+  processed_data: data/processed
+  reports: data/reports
+  vector_store: data/vector_store
+  failed: data/failed
+
+processing:
+  expected_pdf_count: 11
+  enable_ocr: false
+
+chunking:
+  chunk_size_chars: 2000   # target maximum characters per chunk (approximate, paragraph-aware)
+  chunk_overlap_chars: 200 # characters overlap between chunks
+  min_chunk_chars: 200
+  max_chunk_chars: 4000
+
+embedding:
+  provider: sentence_transformers
+  model: "paraphrase-multilingual-MiniLM-L12-v2"
+  batch_size: 32
+
+retrieval:
+  top_k: 5
+  similarity_threshold: 0.0
+
+logging:
+  level: INFO

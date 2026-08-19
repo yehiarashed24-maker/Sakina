@@ -1,0 +1,497 @@
+{
+  "total_pdfs_found": 11,
+  "files": [
+    {
+      "filename": "23-MH-8110-Understanding-Psychosis.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\23-MH-8110-Understanding-Psychosis.pdf",
+      "sha256": "cfb747c2544325e43dfe065b0805ed2761df429c062e3ff7ed545ddcac72ab0c",
+      "page_count": 4,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 2978,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 2,
+          "text_length": 2680,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 3,
+          "text_length": 3940,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 4,
+          "text_length": 3059,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    },
+    {
+      "filename": "adhd-in-adults-four-things-to-know.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\adhd-in-adults-four-things-to-know.pdf",
+      "sha256": "26a51a0cf2748b91995c5b2a74fdb3428048586d883d8e0d6c491a9c06099820",
+      "page_count": 4,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 2736,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 2,
+          "text_length": 2683,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 3,
+          "text_length": 1854,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 4,
+          "text_length": 1520,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    },
+    {
+      "filename": "bipolar-disorder-in-children-and-teens.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\bipolar-disorder-in-children-and-teens.pdf",
+      "sha256": "118db91417c23e0f36297249b21e8482cfea6e6ec53715317a3c1495b513e62b",
+      "page_count": 8,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 40,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 2,
+          "text_length": 2184,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 3,
+          "text_length": 2113,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 4,
+          "text_length": 1775,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 5,
+          "text_length": 2535,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 6,
+          "text_length": 1986,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 7,
+          "text_length": 1584,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 8,
+          "text_length": 1107,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    },
+    {
+      "filename": "depression-women_508.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\depression-women_508.pdf",
+      "sha256": "0a2f3f5c321e43ed269dd84b1035e561b84e0db69312f047eb9f3746b368eb94",
+      "page_count": 2,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 2203,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 2,
+          "text_length": 2966,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    },
+    {
+      "filename": "depression.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\depression.pdf",
+      "sha256": "a65aa4022f641f9ee87bdd2b5058fcdf0e653db5341bf3014e073843607edbd0",
+      "page_count": 8,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 46,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 2,
+          "text_length": 3100,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 3,
+          "text_length": 1868,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 4,
+          "text_length": 3272,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 5,
+          "text_length": 3250,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 6,
+          "text_length": 2740,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 7,
+          "text_length": 1882,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 8,
+          "text_length": 1613,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    },
+    {
+      "filename": "frequently-asked-questions-about-suicide.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\frequently-asked-questions-about-suicide.pdf",
+      "sha256": "057632ce732b9418c0087bc88549490a67169bb8010f787090a3d61ea97dd177",
+      "page_count": 8,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 724,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 2,
+          "text_length": 1640,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 3,
+          "text_length": 1204,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 4,
+          "text_length": 2042,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 5,
+          "text_length": 1675,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 6,
+          "text_length": 1653,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 7,
+          "text_length": 1401,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 8,
+          "text_length": 1072,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    },
+    {
+      "filename": "obsessive-compulsive-disorder-508.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\obsessive-compulsive-disorder-508.pdf",
+      "sha256": "6af289c75efdb9339c1420812d92cb476ceea00382785fc3f7c6f8217aabf65e",
+      "page_count": 8,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 95,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 2,
+          "text_length": 2140,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 3,
+          "text_length": 2277,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 4,
+          "text_length": 2080,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 5,
+          "text_length": 2651,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 6,
+          "text_length": 2371,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 7,
+          "text_length": 1716,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 8,
+          "text_length": 1014,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    },
+    {
+      "filename": "perinatal-depression.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\perinatal-depression.pdf",
+      "sha256": "acc39ca5982eb162a2bb6ce3d45827fe81df27eff03d6f2c162d2c81f99143fb",
+      "page_count": 8,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 20,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 2,
+          "text_length": 2062,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 3,
+          "text_length": 2493,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 4,
+          "text_length": 2185,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 5,
+          "text_length": 2527,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 6,
+          "text_length": 1728,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 7,
+          "text_length": 1797,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 8,
+          "text_length": 1548,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    },
+    {
+      "filename": "post-traumatic-stress-disorder_1.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\post-traumatic-stress-disorder_1.pdf",
+      "sha256": "b75e6ed1b6624b450a6c181176c10504cae8927f8e7fe0493f98db018684bcd0",
+      "page_count": 8,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 31,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 2,
+          "text_length": 2304,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 3,
+          "text_length": 1934,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 4,
+          "text_length": 1980,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 5,
+          "text_length": 2556,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 6,
+          "text_length": 1835,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 7,
+          "text_length": 2013,
+          "has_text": true,
+          "needs_ocr": false
+        },
+        {
+          "page_number": 8,
+          "text_length": 1031,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    },
+    {
+      "filename": "seasonal_affective_disorder_more_than_the_winter_blues.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\seasonal_affective_disorder_more_than_the_winter_blues.pdf",
+      "sha256": "77a4ec836f932cc94ab96b4b448fcc3de633a7c026040e33c6a37ae428ad2c96",
+      "page_count": 1,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 1471,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    },
+    {
+      "filename": "warning-signs-of-suicide.pdf",
+      "path": "C:\\Users\\Computec\\OneDrive\\Desktop\\data\\warning-signs-of-suicide.pdf",
+      "sha256": "747f632fcf7239b8c73bfa522b2c9eccd6ec85ac5161a0de51dcf93a4799bca7",
+      "page_count": 1,
+      "pages": [
+        {
+          "page_number": 1,
+          "text_length": 1015,
+          "has_text": true,
+          "needs_ocr": false
+        }
+      ],
+      "language": "english",
+      "duplicate_of": null,
+      "corrupted": false,
+      "needs_ocr_pages": []
+    }
+  ]
+}

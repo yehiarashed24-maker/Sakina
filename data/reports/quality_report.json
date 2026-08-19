@@ -1,0 +1,8 @@
+{
+  "issues": [
+    {
+      "level": "warning",
+      "message": "Extremely short chunks: 5"
+    }
+  ]
+}

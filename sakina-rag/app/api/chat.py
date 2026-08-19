@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List
-from app.vectorstore.chroma import retrieve_relevant_context
+from app.vectorstore.local_store import retrieve_relevant_context
 from app.llm.openrouter import generate_sakina_response
 
 router = APIRouter()
