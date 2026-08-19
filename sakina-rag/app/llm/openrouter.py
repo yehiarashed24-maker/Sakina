@@ -31,17 +31,6 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
     # Check if it's a casual greeting to avoid forcing RAG citations
     greeting_mode = is_greeting(query)
 
-    # STRICT ANTI-HALLUCINATION GUARDRAIL:
-    # If the user asks a question that isn't in our vector store (sources is empty) and it's not a greeting,
-    # immediately refuse to answer without even calling the LLM.
-    if not sources and not greeting_mode:
-        eng_chars = len(re.findall(r'[a-zA-Z]', query))
-        ar_chars = len(re.findall(r'[\u0600-\u06FF]', query))
-        if eng_chars > ar_chars and eng_chars > 0:
-            return "Sorry, this question is outside my domain. I specialize exclusively in mental health support based on my knowledge base."
-        else:
-            return "آسف، هذا السؤال خارج نطاق تخصصي. أنا متخصص حصرياً في تقديم الدعم في مجال الصحة النفسية بناءً على مراجعي المعتمدة."
-
     prompt = SAKINA_SYSTEM_PROMPT.format(
         context=context if not greeting_mode else "CRITICAL: The user is just greeting. You MUST reply ONLY with a warm greeting in the EXACT SAME LANGUAGE and dialect they used in their message. DO NOT USE ARABIC IF THEY SAID HELLO IN ENGLISH.",
         question=query
@@ -77,10 +66,10 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
     # Build messages array
     messages = [{"role": "system", "content": prompt}]
     
-    # Add history (truncate to last 6 messages to protect token limits)
+    # Add history (truncate to last 30 messages to protect token limits while maintaining deep conversational memory)
     if history:
-        # Take the last 6 messages
-        history_to_use = history[-6:]
+        # Take the last 30 messages
+        history_to_use = history[-30:]
         for msg in history_to_use:
             # Skip appending the query as a user message again if it's the last one in history
             if msg == history[-1] and msg["role"] == "user" and msg["content"] == query:
