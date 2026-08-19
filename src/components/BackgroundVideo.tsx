@@ -62,6 +62,7 @@ export default function BackgroundVideo({ src, className = "", wrapperClassName 
         autoPlay
         playsInline
         loop
+        preload="auto"
         disablePictureInPicture
         disableRemotePlayback
       />

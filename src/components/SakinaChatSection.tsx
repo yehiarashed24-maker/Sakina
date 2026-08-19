@@ -25,7 +25,7 @@ export default function SakinaChatSection() {
       textAr: 'أنا هنا للاستماع لك.\nأخبرني أكثر عما تشعر به.'
     }
   ]);
-  
+
   const [isTyping, setIsTyping] = useState(false);
   const [aiProcess, setAiProcess] = useState('');
 
@@ -38,12 +38,12 @@ export default function SakinaChatSection() {
 
   const handleSend = () => {
     if (!input.trim()) return;
-    
-    setMessages(prev => [...prev, { 
-      id: Date.now(), 
-      sender: 'user', 
-      textEn: input, 
-      textAr: input 
+
+    setMessages(prev => [...prev, {
+      id: Date.now(),
+      sender: 'user',
+      textEn: input,
+      textAr: input
     }]);
     setInput('');
     setIsTyping(true);
@@ -75,18 +75,18 @@ export default function SakinaChatSection() {
         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4"
         className="absolute inset-0 w-full h-full object-cover opacity-50"
       />
-      
+
       {/* Overlay gradient for soft emotional light */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black pointer-events-none"></div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
         transition={{ duration: 1 }}
         className="w-full max-w-4xl relative z-10"
       >
         <TiltCard className="liquid-glass rounded-3xl md:rounded-[40px] flex flex-col h-[75vh] md:h-[80vh] shadow-2xl shadow-white/5 border border-white/10">
-          
+
           {/* Chat Header */}
           <div className="p-6 md:p-8 flex justify-between items-center border-b border-white/10 bg-black/20">
             <div className="flex flex-col">
@@ -94,7 +94,7 @@ export default function SakinaChatSection() {
               <span className="text-white/40 text-sm font-medium mt-1">سكينة</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 liquid-glass rounded-full">
-              <motion.div 
+              <motion.div
                 animate={{ opacity: [1, 0.5, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
                 className="w-2 h-2 rounded-full bg-emerald-400"
@@ -113,11 +113,10 @@ export default function SakinaChatSection() {
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex flex-col max-w-[85%] md:max-w-[70%] ${msg.sender === 'user' ? 'self-end items-end' : 'self-start items-start'}`}
                 >
-                  <div className={`p-4 md:p-5 rounded-2xl md:rounded-3xl ${
-                    msg.sender === 'user' 
-                      ? 'bg-white text-black rounded-tr-sm' 
+                  <div className={`p-4 md:p-5 rounded-2xl md:rounded-3xl ${msg.sender === 'user'
+                      ? 'bg-white text-black rounded-tr-sm'
                       : 'liquid-glass text-white rounded-tl-sm border border-white/5'
-                  }`}>
+                    }`}>
                     <p className={`text-sm md:text-base leading-relaxed mb-2 ${msg.sender === 'user' ? 'font-medium' : ''}`}>
                       {lang === 'ar' ? msg.textAr : msg.textEn}
                     </p>
@@ -127,7 +126,7 @@ export default function SakinaChatSection() {
 
               {/* Typing & AI Process Animation */}
               {isTyping && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
@@ -150,7 +149,7 @@ export default function SakinaChatSection() {
                       </motion.span>
                     </AnimatePresence>
                   </div>
-                  
+
                   <div className="liquid-glass rounded-2xl rounded-tl-sm p-4 w-24 flex justify-center items-center gap-1.5">
                     {[0, 1, 2].map(i => (
                       <motion.div
@@ -177,12 +176,12 @@ export default function SakinaChatSection() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               />
-              
+
               <button className="p-3 text-white/50 hover:text-white transition-colors">
                 <Mic className="w-5 h-5" />
               </button>
-              
-              <button 
+
+              <button
                 onClick={handleSend}
                 className={`bg-white rounded-full p-3 text-black hover:bg-white/90 transition-transform hover:scale-105 active:scale-95 ${lang === 'ar' ? 'rotate-180' : ''}`}
               >
