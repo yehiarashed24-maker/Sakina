@@ -96,7 +96,7 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
   return (
     <section className="h-screen w-full">
       <div className="relative h-full w-full overflow-hidden rounded-2xl md:rounded-[2rem]">
-        
+
         {/* Background video */}
         <BackgroundVideo
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4"
@@ -124,7 +124,7 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
         {/* Hero content */}
         <div className="absolute bottom-0 left-0 right-0 px-4 pb-2 sm:px-6 md:px-10">
           <div className="grid grid-cols-12 items-end gap-4">
-            
+
             <div className={`col-span-12 lg:col-span-8 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
               <h1
                 className="font-medium leading-[0.85] tracking-[-0.07em] text-[26vw] sm:text-[24vw] md:text-[22vw] lg:text-[20vw] xl:text-[19vw] 2xl:text-[20vw]"
@@ -136,7 +136,7 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
             </div>
 
             <div className="col-span-12 flex flex-col gap-5 pb-6 lg:col-span-4 lg:pb-10">
-              
+
               <motion.p
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -145,8 +145,8 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
                 style={{ lineHeight: 1.4 }}
                 dir={lang === 'ar' ? 'rtl' : 'ltr'}
               >
-                {lang === 'ar' 
-                  ? 'لو بتواجه أي مشكلة، إحنا هنا عشان نسمعك ونساعدك. تواصل معنا في أي وقت.' 
+                {lang === 'ar'
+                  ? 'لو بتواجه أي مشكلة، إحنا هنا عشان نسمعك ونساعدك. تواصل معنا في أي وقت.'
                   : 'If you are facing any problem, we are here to listen and help. Contact us anytime.'}
               </motion.p>
 
@@ -159,4 +159,4 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
   );
 };
 
-export {PrismaHero}
+export { PrismaHero }

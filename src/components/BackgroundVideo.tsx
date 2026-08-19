@@ -15,7 +15,7 @@ function setupGlobalUnlock() {
   const tryAll = () => {
     pendingVideos.forEach(v => {
       if (v.paused) {
-        v.play().catch(() => {});
+        v.play().catch(() => { });
       }
     });
   };

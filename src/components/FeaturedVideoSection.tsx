@@ -10,7 +10,7 @@ export default function FeaturedVideoSection() {
 
   return (
     <section className="bg-black pt-6 md:pt-10 pb-20 md:pb-32 px-6 overflow-hidden flex justify-center">
-      <motion.div 
+      <motion.div
         ref={ref}
         initial={{ opacity: 0, y: 60 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
@@ -22,7 +22,7 @@ export default function FeaturedVideoSection() {
           wrapperClassName="absolute inset-0"
           className="w-full h-full object-cover"
         />
-        
+
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
 

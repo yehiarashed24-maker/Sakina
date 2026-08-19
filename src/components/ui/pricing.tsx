@@ -72,7 +72,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
@@ -223,7 +223,7 @@ const PricingContext = createContext<{
   t: PricingSectionProps["translations"];
 }>({
   isMonthly: true,
-  setIsMonthly: () => {},
+  setIsMonthly: () => { },
   t: undefined,
 });
 
@@ -263,7 +263,7 @@ export function PricingSection({
       >
         <InteractiveStarfield
           mousePosition={mousePosition}
-          containerRef={containerRef as React.RefObject<HTMLDivElement>}
+          containerRef={containerRef}
         />
         <div className="relative z-10 container mx-auto px-4 md:px-6">
           <div className="max-w-3xl mx-auto text-center space-y-4 mb-12 mt-10">
@@ -466,8 +466,8 @@ function PricingCard({ plan, index }: { plan: PricingPlan; index: number }) {
             to={plan.href}
             className={cn(
               "w-full flex items-center justify-center rounded-full py-3.5 px-4 text-sm font-semibold transition-all duration-300",
-              plan.isPopular 
-                ? "bg-white text-black hover:bg-white/90 hover:scale-105 active:scale-95" 
+              plan.isPopular
+                ? "bg-white text-black hover:bg-white/90 hover:scale-105 active:scale-95"
                 : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
             )}
           >
