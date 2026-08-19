@@ -139,13 +139,22 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
             
         return reply
 
+    if "OUT_OF_SCOPE_NO_CONTEXT" in reply:
+        if eng_chars > ar_chars and eng_chars > 0:
+            reply = "I apologize, but I do not have documented information about this specific topic in my current mental health references."
+        else:
+            reply = "أعتذر، ليس لدي معلومات موثقة حول هذا الموضوع في المراجع الطبية المتاحة لي حالياً."
+
     # Check if the reply is a refusal for an out-of-scope query
     refusal_keywords = [
         "specialized exclusively in mental health",
         "متخصص حصرياً في الصحة النفسية",
         "خارج نطاق تخصصي",
         "outside of this domain",
-        "outside my domain"
+        "outside my domain",
+        "out_of_scope_no_context",
+        "ليس لدي معلومات موثقة حول هذا الموضوع",
+        "i do not have documented information about this specific topic"
     ]
     is_refusal = any(kw.lower() in reply.lower() for kw in refusal_keywords)
 
