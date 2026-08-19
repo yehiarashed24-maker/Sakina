@@ -139,10 +139,11 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="text-xs text-white/70 sm:text-sm md:text-base font-medium"
+                className="text-xs text-white/70 sm:text-sm md:text-base font-medium font-arabic"
                 style={{ lineHeight: 1.4 }}
+                dir="rtl"
               >
-                Sakina is a private, AI-powered mental wellness companion. A safe space to understand your feelings and express your thoughts with empathy.
+                لو بتواجه أي مشكلة، إحنا هنا عشان نسمعك ونساعدك. تواصل معنا في أي وقت.
               </motion.p>
 
               {children}
