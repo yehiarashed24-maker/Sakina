@@ -34,23 +34,16 @@ export default function MoodTracker() {
         </motion.span>
       </div>
 
-      <div className="space-y-3 mt-2">
-        {moods.map(({ key, label, labelAr, color }) => (
-          <div key={key} className="flex items-center gap-3">
-            <span className="text-xs text-white/40 w-16">
-              {lang === 'ar' ? labelAr : label}
-            </span>
-            <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-              <motion.div
-                className={`h-full ${color}/80 rounded-full`}
-                initial={{ width: '0%' }}
-                animate={{ width: `${mood[key]}%` }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-              />
-            </div>
-            <span className="text-xs text-white/30 w-8 text-right">{mood[key]}%</span>
-          </div>
-        ))}
+      <div className="mt-3 bg-white/[0.02] rounded-xl p-4 border border-white/5">
+        <p className="text-white/70 text-sm leading-relaxed">
+          {isZero 
+            ? (lang === 'ar' 
+                ? 'ابدأ التحدث ليتمكن الذكاء الاصطناعي من فهم مشاعرك وتحليل حالتك المزاجية.' 
+                : 'Start chatting so the AI can understand your feelings and analyze your mood.')
+            : (lang === 'ar' 
+                ? `بناءً على تحليل المحادثة، يبدو أن حالتك المزاجية الغالبة الآن هي (${dominantText}). سَكِينَة هنا لدعمك دائماً.` 
+                : `Based on the conversation analysis, your dominant mood right now seems to be (${dominantText}). Sakina is here to support you.`)}
+        </p>
       </div>
     </div>
   );
