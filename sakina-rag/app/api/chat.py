@@ -30,7 +30,7 @@ async def chat_endpoint(request: ChatRequest):
         
     try:
         # 1. Retrieve relevant context chunks and metadata sources
-        context_text, sources = retrieve_relevant_context(request.message, k=4)
+        context_text, sources = retrieve_relevant_context(request.message, k=6)
         
         # 2. Generate response via OpenRouter LLM with Sakina personality prompt & anti-hallucination citations
         # Convert history objects to dicts

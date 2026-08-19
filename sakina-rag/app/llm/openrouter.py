@@ -163,7 +163,12 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
         base_url = getattr(settings, 'BACKEND_URL', 'http://localhost:8000').rstrip('/')
         citation_lines = []
         for src in sources:
-            src_name = src.get('source', 'mental_health_rag_kb.pdf')
+            src_name = src.get('source', '')
+            
+            # Skip the internal KB from citations
+            if src_name == 'mental_health_rag_kb.pdf':
+                continue
+                
             src_page = src.get('page', 1)
             cit_str = f"[{src_name} (صـ {src_page})]({base_url}/pdfs/{src_name})"
             if cit_str not in citation_lines:
