@@ -50,8 +50,8 @@ app.include_router(auth_router)
 app.include_router(history_router)
 app.include_router(transcribe_router)
 
-# Serve PDFs directory
-pdf_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "knowledge", "pdfs")
+# Serve PDFs directory from the raw data folder
+pdf_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "raw")
 if os.path.exists(pdf_dir):
     app.mount("/pdfs", StaticFiles(directory=pdf_dir), name="pdfs")
 
