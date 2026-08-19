@@ -2,6 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 
 /* ---------------- WordsPullUp ---------------- */
 interface WordsPullUpProps {
@@ -89,6 +90,8 @@ interface PrismaHeroProps {
 }
 
 const PrismaHero = ({ children }: PrismaHeroProps) => {
+  const { lang } = useLanguage();
+
   return (
     <section className="h-screen w-full">
       <div className="relative h-full w-full overflow-hidden rounded-2xl md:rounded-[2rem]">
@@ -99,7 +102,10 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
           loop
           muted
           playsInline
-          className="absolute inset-0 h-full w-full object-cover"
+          controls={false}
+          disablePictureInPicture
+          disableRemotePlayback
+          className="absolute inset-0 h-full w-full object-cover pointer-events-none"
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4"
         />
 
@@ -110,13 +116,13 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
 
         {/* Back to Home Button */}
-        <div className="absolute left-6 top-6 z-20">
+        <div className={`absolute ${lang === 'ar' ? 'right-6' : 'left-6'} top-6 z-20`}>
           <Link
             to="/"
-            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:bg-white/10"
+            className={`flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:bg-white/10 ${lang === 'ar' ? 'flex-row-reverse font-arabic' : 'font-sans'}`}
           >
-            <ArrowRight className="w-4 h-4 rotate-180" />
-            <span className="text-sm font-medium">Back to Home</span>
+            <ArrowRight className={`w-4 h-4 ${lang === 'ar' ? '' : 'rotate-180'}`} />
+            <span className="text-sm font-medium">{lang === 'ar' ? 'العودة للرئيسية' : 'Back to Home'}</span>
           </Link>
         </div>
 
@@ -124,12 +130,13 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
         <div className="absolute bottom-0 left-0 right-0 px-4 pb-2 sm:px-6 md:px-10">
           <div className="grid grid-cols-12 items-end gap-4">
             
-            <div className="col-span-12 lg:col-span-8">
+            <div className={`col-span-12 lg:col-span-8 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
               <h1
                 className="font-medium leading-[0.85] tracking-[-0.07em] text-[26vw] sm:text-[24vw] md:text-[22vw] lg:text-[20vw] xl:text-[19vw] 2xl:text-[20vw]"
                 style={{ color: "#E1E0CC" }}
+                dir={lang === 'ar' ? 'rtl' : 'ltr'}
               >
-                <WordsPullUp text="Sakina" showAsterisk />
+                <WordsPullUp text={lang === 'ar' ? 'سكينة' : 'Sakina'} showAsterisk />
               </h1>
             </div>
 
@@ -139,11 +146,13 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="text-xs text-white/70 sm:text-sm md:text-base font-medium font-arabic"
+                className={`text-xs text-white/70 sm:text-sm md:text-base font-medium ${lang === 'ar' ? 'font-arabic' : 'font-sans'}`}
                 style={{ lineHeight: 1.4 }}
-                dir="rtl"
+                dir={lang === 'ar' ? 'rtl' : 'ltr'}
               >
-                لو بتواجه أي مشكلة، إحنا هنا عشان نسمعك ونساعدك. تواصل معنا في أي وقت.
+                {lang === 'ar' 
+                  ? 'لو بتواجه أي مشكلة، إحنا هنا عشان نسمعك ونساعدك. تواصل معنا في أي وقت.' 
+                  : 'If you are facing any problem, we are here to listen and help. Contact us anytime.'}
               </motion.p>
 
               {children}
