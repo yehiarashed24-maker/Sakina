@@ -218,8 +218,8 @@ def retrieve_relevant_context(query: str, k: int = 4):
         metadata = results['metadatas'][i]
         docs.append(doc_text)
         
-        source_name = metadata.get("source", "Mental Health KB")
-        page_num = metadata.get("page", 1)
+        source_name = metadata.get("filename", "Mental Health KB")
+        page_num = metadata.get("page_start", 1)
         topic_name = metadata.get("topic", "Mental Wellness")
         
         src_key = f"{source_name}-page{page_num}-{topic_name}"
