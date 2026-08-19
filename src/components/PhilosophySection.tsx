@@ -20,9 +20,11 @@ export default function PhilosophySection() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
           transition={{ duration: 0.8 }}
-          className={`text-5xl md:text-7xl lg:text-8xl text-white tracking-tight mb-20 md:mb-32 text-center md:text-left ${lang === 'en' ? '' : 'font-semibold'}`}
+          className={`flex items-center justify-center md:justify-start gap-4 text-5xl md:text-7xl lg:text-8xl text-white tracking-tight mb-20 md:mb-32 ${lang === 'en' ? '' : 'font-semibold'}`}
         >
-          {t('philTitle1')} <em className={`italic text-white/40 ${lang === 'en' ? 'font-instrument' : ''}`}>x</em> {t('philTitle2')}
+          <span>{t('philTitle1')}</span>
+          <em className={`italic text-white/40 leading-none -translate-y-1 md:-translate-y-2 ${lang === 'en' ? 'font-instrument' : ''}`}>x</em>
+          <span>{t('philTitle2')}</span>
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 lg:gap-32 items-center">
@@ -52,18 +54,18 @@ export default function PhilosophySection() {
             className="flex flex-col"
           >
             {/* Block 1 */}
-            <div className="pb-8">
-              <div className="text-white/40 text-xs tracking-widest uppercase mb-4">{t('emoUnder')}</div>
+            <div className="pb-6">
+              <div className="text-white/40 text-xs tracking-widest uppercase mb-3">{t('emoUnder')}</div>
               <p className="text-white/70 text-base md:text-lg leading-relaxed">
                 {t('emoDesc')}
               </p>
             </div>
             
-            <div className="w-full h-px bg-white/10 my-4"></div>
+            <div className="w-full h-px bg-white/10 my-2"></div>
             
             {/* Block 2 */}
-            <div className="pt-8">
-              <div className="text-white/40 text-xs tracking-widest uppercase mb-4">{t('knowAi')}</div>
+            <div className="pt-6">
+              <div className="text-white/40 text-xs tracking-widest uppercase mb-3">{t('knowAi')}</div>
               <p className="text-white/70 text-base md:text-lg leading-relaxed">
                 {t('knowDesc')}
               </p>
