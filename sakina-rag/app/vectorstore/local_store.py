@@ -197,8 +197,8 @@ def retrieve_relevant_context(query: str, k: int = 4):
     seen_sources = set()
     seen_texts = set()
     
-    # Relevance Threshold: Only keep results with a cosine similarity > 0.35
-    RELEVANCE_THRESHOLD = 0.35
+    # Relevance Threshold: Only keep results with a cosine similarity > 0.0 to ensure references always appear
+    RELEVANCE_THRESHOLD = 0.0
     
     for i in range(len(results['documents'])):
         if len(docs) >= k:

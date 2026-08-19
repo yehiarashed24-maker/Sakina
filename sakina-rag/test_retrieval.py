@@ -1,8 +1,12 @@
-from app.config import settings
-from app.vectorstore.local_store import retrieve_relevant_context
+from app.vectorstore.local_store import get_vectorstore, get_embedder
 
-query = "تفاصيل عن الرهاب الاجتماعي"
-context, sources = retrieve_relevant_context(query, k=4)
-print("SOURCES:")
-for s in sources:
-    print(s)
+query = "انا خايف من الناس"
+embedder = get_embedder()
+query_emb = embedder.embed_texts([query])[0]
+
+store = get_vectorstore()
+results = store.similarity_search(query_emb, top_k=4)
+
+print("DISTANCES for 'انا خايف من الناس':")
+for d, m in zip(results['distances'], results['metadatas']):
+    print(f"Dist: {d:.4f}, File: {m.get('filename')}")
