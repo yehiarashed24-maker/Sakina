@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "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")
     CHROMA_DB_DIR: str = os.getenv("CHROMA_DB_DIR", "./chroma_db")
     LOCAL_VECTOR_STORE_DIR: str = os.getenv("LOCAL_VECTOR_STORE_DIR", "../data/vector_store")
+    BACKEND_URL: str = os.getenv("RENDER_EXTERNAL_URL", os.getenv("BACKEND_URL", "http://localhost:8000"))
     EMBEDDING_MODEL_NAME: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     KNOWLEDGE_BASE_DIR: str = "./knowledge/pdfs"
 

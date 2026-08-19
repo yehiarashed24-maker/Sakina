@@ -36,8 +36,9 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
         question=query
     )
     
-    gemini_api_key = getattr(settings, "GEMINI_API_KEY", "AQ.Ab8RN6IJu-ehdSInfdiXukBliLoIl4ewcTpC6RolvCbnch3JCw")
-    openrouter_api_key = getattr(settings, "OPENROUTER_API_KEY", "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")
+    # Keys should ideally come entirely from settings now
+    gemini_api_key = getattr(settings, "GEMINI_API_KEY", "")
+    openrouter_api_key = getattr(settings, "OPENROUTER_API_KEY", "")
 
     candidate_endpoints = [
         {
@@ -54,7 +55,7 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
             "url": "https://openrouter.ai/api/v1/chat/completions",
             "headers": {
                 "Authorization": f"Bearer {openrouter_api_key}",
-                "HTTP-Referer": "http://localhost:8000",
+                "HTTP-Referer": settings.BACKEND_URL,
                 "X-Title": "Sakina AI RAG Backend",
                 "Content-Type": "application/json"
             },
@@ -65,9 +66,11 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
     # Build messages array
     messages = [{"role": "system", "content": prompt}]
     
-    # Add history (exclude the very last message if it's the exact same query, which it usually is in our implementation)
+    # Add history (truncate to last 6 messages to protect token limits)
     if history:
-        for msg in history:
+        # Take the last 6 messages
+        history_to_use = history[-6:]
+        for msg in history_to_use:
             # Skip appending the query as a user message again if it's the last one in history
             if msg == history[-1] and msg["role"] == "user" and msg["content"] == query:
                 continue
@@ -93,6 +96,10 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
     # Try endpoints one by one
     async with httpx.AsyncClient(timeout=15.0) as client:
         for ep in candidate_endpoints:
+            # Skip endpoint if no key is provided
+            if not ep["headers"]["Authorization"].replace("Bearer ", "").strip():
+                continue
+                
             payload = {
                 "model": ep["model"],
                 "messages": messages,
@@ -109,26 +116,9 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
                     data = response.json()
                     raw_reply = data["choices"][0]["message"]["content"]
                     
-                    # Clean out thinking blocks
+                    # Clean out thinking blocks robustly
                     clean_reply = re.sub(r'<think>.*?</think>', '', raw_reply, flags=re.DOTALL)
-                    
-                    if "Here's a thinking process" in clean_reply:
-                        blocks = clean_reply.split('\n\n')
-                        final_blocks = []
-                        in_thinking = False
-                        for block in blocks:
-                            if "Here's a thinking process" in block or block.strip().startswith("Here's a thinking"):
-                                in_thinking = True
-                                continue
-                            if in_thinking:
-                                if re.match(r'^\d+\.', block.strip()) or block.strip().startswith("-"):
-                                    continue
-                                else:
-                                    in_thinking = False
-                                    final_blocks.append(block)
-                            else:
-                                final_blocks.append(block)
-                        clean_reply = '\n\n'.join(final_blocks).strip()
+                    clean_reply = re.sub(r'Here\'s a thinking process.*?\n\n', '', clean_reply, flags=re.DOTALL)
                     
                     reply = clean_reply.strip()
                     
@@ -165,7 +155,10 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
         src_name = first_src.get('source', 'mental_health_rag_kb.pdf')
         src_page = first_src.get('page', 1)
         src_topic = first_src.get('topic', 'الصحة النفسية')
-        citation = f"\n\n📚 **المرجع**: [{src_name} (صفحة {src_page} - {src_topic})](http://localhost:8000/pdfs/{src_name})"
+        
+        # Ensure we don't end up with duplicate slashes
+        base_url = getattr(settings, 'BACKEND_URL', 'http://localhost:8000').rstrip('/')
+        citation = f"\n\n📚 **المرجع**: [{src_name} (صفحة {src_page} - {src_topic})]({base_url}/pdfs/{src_name})"
         reply += citation
     
     return reply

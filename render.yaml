@@ -13,6 +13,8 @@ services:
           type: web
           name: sakina-frontend
           envVarKey: RENDER_EXTERNAL_URL
+      - key: BACKEND_URL
+        value: "https://sakina-backend.onrender.com" # Fallback, Render doesn't natively allow referencing its own URL dynamically via fromService for itself, but actually they do via RENDER_EXTERNAL_URL directly in the env.
 
   # Frontend Static Site
   - type: web
