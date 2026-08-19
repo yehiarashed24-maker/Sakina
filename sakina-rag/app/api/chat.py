@@ -31,8 +31,16 @@ async def chat_endpoint(request: Request, body: ChatRequest):
         raise HTTPException(status_code=400, detail="Message content cannot be empty")
         
     try:
-        # 1. Retrieve relevant context chunks and metadata sources
-        context_text, sources = retrieve_relevant_context(body.message, k=6)
+        from app.llm.openrouter import is_greeting
+        greeting_mode = is_greeting(body.message)
+        
+        if greeting_mode:
+            # Bypass heavy PyTorch embedding generation for simple greetings
+            context_text = ""
+            sources = []
+        else:
+            # 1. Retrieve relevant context chunks and metadata sources
+            context_text, sources = retrieve_relevant_context(body.message, k=6)
         
         # 2. Generate response via OpenRouter LLM with Sakina personality prompt & anti-hallucination citations
         # Convert history objects to dicts
