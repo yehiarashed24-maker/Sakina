@@ -20,7 +20,7 @@ export default function PhilosophySection() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
           transition={{ duration: 0.8 }}
-          className={`flex items-center justify-center md:justify-start gap-4 text-5xl md:text-7xl lg:text-8xl text-white tracking-tight mb-20 md:mb-32 ${lang === 'en' ? '' : 'font-semibold'}`}
+          className={`flex items-center justify-center md:justify-start gap-3 md:gap-4 text-4xl md:text-5xl lg:text-6xl text-white tracking-tight mb-16 md:mb-24 ${lang === 'en' ? '' : 'font-semibold'}`}
         >
           <span>{t('philTitle1')}</span>
           <em className={`italic text-white/40 leading-none -translate-y-1 md:-translate-y-2 ${lang === 'en' ? 'font-instrument' : ''}`}>x</em>

@@ -38,7 +38,7 @@ export const translations = {
     
     // Philosophy
     philTitle1: "Empathy",
-    philTitle2: "Intelligence",
+    philTitle2: "Artificial Intelligence",
     emoUnder: "Emotional Understanding",
     emoDesc: "Sakina understands your thoughts, emotions, and conversation context to create meaningful interactions.",
     knowAi: "Knowledge Powered AI",
@@ -112,7 +112,7 @@ export const translations = {
     
     // Philosophy
     philTitle1: "التعاطف",
-    philTitle2: "الذكاء",
+    philTitle2: "الذكاء الاصطناعي",
     emoUnder: "الفهم العاطفي",
     emoDesc: "تتفهم سَكِينَة أفكارك ومشاعرك وسياق المحادثة لخلق تفاعلات ذات معنى.",
     knowAi: "ذكاء اصطناعي مبني على المعرفة",
