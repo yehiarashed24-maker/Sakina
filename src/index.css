@@ -2,6 +2,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+/* Force hide all native video controls for background videos */
+video::-webkit-media-controls {
+    display: none !important;
+}
+video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
+video::-webkit-media-controls-panel {
+    display: none !important;
+}
+video::-webkit-media-controls-overlay-play-button {
+    display: none !important;
+}
+video {
+    -webkit-appearance: none;
+}
 
 @theme {
   --font-instrument: "Instrument Serif", serif;

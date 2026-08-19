@@ -58,6 +58,7 @@ export default function BackgroundVideo({ src, className = "", wrapperClassName 
         ref={videoRef}
         src={src}
         className={`w-full h-full object-cover pointer-events-none ${className}`}
+        controls={false}
         muted
         autoPlay
         playsInline
