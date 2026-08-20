@@ -4,35 +4,9 @@ from typing import List, Dict, Any
 from app.config import settings
 from app.prompts.sakina_prompt import SAKINA_SYSTEM_PROMPT
 
-GREETING_KEYWORDS = [
-    "hi", "hello", "hey", "hii", "hiii", "ازيك", "إزيك", "اخبارك", "أخبارك", 
-    "مرحبا", "أهلا", "اهلا", "سلام عليكم", "السلام عليكم", "صباح الخير", "مساء الخير", 
-    "مين انت", "من انت", "ممكن تعرفي بنفسك", "تعرفي بنفسك", "شلونك", "كيفك", "كيف حالك", "عامل ايه", "عاملة ايه"
-]
-
-def is_greeting(text: str) -> bool:
-    clean = text.strip().lower()
-    # Remove basic punctuation
-    for p in [',', '!', '.', '؟', '?']:
-        clean = clean.replace(p, '')
-    clean = clean.strip()
-    
-    # Check if any greeting keyword is in the text, and the text is short enough (<= 6 words)
-    words = clean.split()
-    if len(words) <= 6:
-        # Check direct word match or phrase match
-        for kw in GREETING_KEYWORDS:
-            if kw == clean or f" {kw} " in f" {clean} ":
-                return True
-                
-    return False
-
 async def generate_sakina_response(query: str, context: str, sources: List[Dict[str, Any]], history: List[Dict[str, str]] = None) -> str:
-    # Check if it's a casual greeting to avoid forcing RAG citations
-    greeting_mode = is_greeting(query)
-
     prompt = SAKINA_SYSTEM_PROMPT.format(
-        context=context if not greeting_mode else "CRITICAL: The user is just greeting. You MUST reply ONLY with a warm greeting in the EXACT SAME LANGUAGE and dialect they used in their message. DO NOT USE ARABIC IF THEY SAID HELLO IN ENGLISH.",
+        context=context,
         question=query
     )
     
@@ -94,7 +68,7 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
 
     reply = ""
     # Try endpoints one by one
-    async with httpx.AsyncClient(timeout=15.0) as client:
+    async with httpx.AsyncClient(timeout=120.0) as client:
         for ep in candidate_endpoints:
             # Skip endpoint if no key is provided
             if not ep["headers"]["Authorization"].replace("Bearer ", "").strip():
@@ -128,7 +102,7 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
                 else:
                     print(f"❌ Endpoint {ep['name']} HTTP Error status: {response.status_code}, body: {response.text}")
             except Exception as err:
-                print(f"❌ Endpoint {ep['name']} Exception failed: {err}")
+                print(f"❌ Endpoint {ep['name']} Exception failed: {repr(err)}")
 
     if not reply or not reply.strip():
         # Fallback context-grounded response if generation failed completely
@@ -145,6 +119,11 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
         else:
             reply = "أعتذر، ليس لدي معلومات موثقة حول هذا الموضوع في المراجع الطبية المتاحة لي حالياً."
 
+    # Check if the LLM declared it used the context
+    used_context = "[USED_CONTEXT]" in reply
+    if used_context:
+        reply = reply.replace("[USED_CONTEXT]", "").strip()
+
     # Check if the reply is a refusal for an out-of-scope query
     refusal_keywords = [
         "specialized exclusively in mental health",
@@ -158,8 +137,8 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
     ]
     is_refusal = any(kw.lower() in reply.lower() for kw in refusal_keywords)
 
-    # Manually append the clickable citation only if it's not a simple greeting and not a refusal
-    if sources and not greeting_mode and not is_refusal:
+    # Append citation ONLY if the LLM confirmed it used context, and it's not a refusal
+    if sources and used_context and not is_refusal:
         base_url = getattr(settings, 'BACKEND_URL', 'http://localhost:8000').rstrip('/')
         citation_lines = []
         for src in sources:

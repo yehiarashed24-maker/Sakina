@@ -15,13 +15,18 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         user_id: str = payload.get("sub")
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid token")
-    except jwt.PyJWTError:
+    except jwt.PyJWTError as e:
+        print(f"JWT Decode Error: {e}")
         raise HTTPException(status_code=401, detail="Invalid token")
     
+    from bson.errors import InvalidId
     try:
         user = db.users.find_one({"_id": ObjectId(user_id)})
-    except Exception:
+    except InvalidId:
         raise HTTPException(status_code=401, detail="Invalid token format")
+    except Exception as e:
+        print(f"MongoDB Find Error: {e}")
+        raise HTTPException(status_code=503, detail="Database connection error")
 
     if user is None:
         raise HTTPException(status_code=401, detail="User not found")

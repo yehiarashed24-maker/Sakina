@@ -124,6 +124,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         // Token invalid or expired
         if(res.status === 401) {
             console.error("Token expired or invalid");
+            localStorage.removeItem('sakina_token');
+            localStorage.removeItem('sakina_user');
+            localStorage.removeItem('sakina_active_id_v3');
+            window.location.href = '/';
         }
       }
     } catch (e) {

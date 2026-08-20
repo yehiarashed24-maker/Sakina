@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "concurrently \"npm run dev\" \"cd sakina-rag && source .venv/bin/activate && uvicorn app.main:app --reload\"",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview"
@@ -39,6 +40,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.185.4",
     "@vitejs/plugin-react": "^6.0.4",
+    "concurrently": "^10.0.5",
     "oxlint": "^1.75.0",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"
