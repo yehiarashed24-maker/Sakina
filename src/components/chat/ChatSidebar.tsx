@@ -1,17 +1,21 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Mic } from 'lucide-react';
 import { motion } from 'framer-motion';
 import MoodTracker from './MoodTracker';
 import { useLanguage } from '../../context/LanguageContext';
 import { useChatContext } from '../../context/ChatContext';
 
-export default function ChatSidebar() {
+interface ChatSidebarProps {
+  onSwitchToTalk?: () => void;
+}
+
+export default function ChatSidebar({ onSwitchToTalk }: ChatSidebarProps) {
   const { t, lang } = useLanguage();
   const { conversations, activeConvId, startNewConversation, switchConversation, deleteConversation } = useChatContext();
 
   return (
     <aside className="w-[340px] hidden lg:flex flex-col border-r border-white/5 relative z-10 liquid-glass m-6 mr-3 rounded-[40px] shadow-2xl backdrop-blur-xl bg-white/[0.01]">
-      <div className="p-8 pb-6 border-b border-white/5 flex flex-col gap-8">
+      <div className="p-8 pb-6 border-b border-white/5 flex flex-col gap-6">
         <Link
           to="/"
           className="text-white/50 hover:text-white transition-colors flex items-center gap-3 text-sm font-medium w-fit group"
@@ -20,17 +24,44 @@ export default function ChatSidebar() {
           {t('home') || 'Home'}
         </Link>
 
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={startNewConversation}
-          className="flex items-center justify-center gap-2 w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl py-4 transition-all"
-        >
-          <Plus className="w-5 h-5" />
-          <span className="font-medium text-sm">
-            {lang === 'ar' ? 'محادثة جديدة' : 'New Conversation'}
-          </span>
-        </motion.button>
+        {/* Action Buttons: New Conversation & Voice Call */}
+        <div className="flex flex-col gap-3">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={startNewConversation}
+            className="flex items-center justify-center gap-2 w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl py-3.5 transition-all cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="font-medium text-sm">
+              {lang === 'ar' ? 'محادثة جديدة' : 'New Conversation'}
+            </span>
+          </motion.button>
+
+          {onSwitchToTalk && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={onSwitchToTalk}
+              className="flex items-center justify-between w-full bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 hover:from-neutral-800 hover:to-neutral-700 border border-cyan-500/30 text-white rounded-2xl px-4 py-3 transition-all shadow-[0_0_20px_rgba(34,211,238,0.15)] cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center">
+                  <Mic className="w-4 h-4 text-cyan-300 animate-pulse" />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="font-semibold text-xs text-white">
+                    {lang === 'ar' ? 'المكالمة الصوتية (Talk)' : 'Live Voice Call'}
+                  </span>
+                  <span className="text-[10px] text-cyan-300/80 font-mono">
+                    {lang === 'ar' ? 'تحدث مع سكينة مباشرة' : 'Speak to Sakina'}
+                  </span>
+                </div>
+              </div>
+              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+            </motion.button>
+          )}
+        </div>
       </div>
 
       <div className="p-8 pt-6 flex-1 overflow-y-auto hide-scrollbar flex flex-col">

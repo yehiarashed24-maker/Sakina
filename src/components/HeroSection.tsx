@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Globe, ArrowRight, Mail, MessageSquare } from 'lucide-react';
+import { Globe, ArrowRight, Mail, MessageSquare, Mic, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import BackgroundVideo from './BackgroundVideo';
@@ -9,6 +9,7 @@ export default function HeroSection() {
   const { t, lang, setLang } = useLanguage();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('sakina_token'));
+  const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
 
   const storedUser = localStorage.getItem('sakina_user');
   const user = storedUser ? JSON.parse(storedUser) : null;
@@ -31,6 +32,8 @@ export default function HeroSection() {
           setIsLoggedIn(true);
           // Notify ChatContext to reload conversations
           window.dispatchEvent(new Event('sakina:login'));
+          // Navigate to destination (default /chat)
+          navigate(pendingRedirect || '/chat');
         } else {
           console.error("Backend auth failed");
         }
@@ -42,6 +45,15 @@ export default function HeroSection() {
       console.error('Google Login Failed');
     }
   });
+
+  const handleEnterTherapySession = (targetPath: string = '/chat') => {
+    if (localStorage.getItem('sakina_token')) {
+      navigate(targetPath);
+    } else {
+      setPendingRedirect(targetPath);
+      handleGoogleLogin();
+    }
+  };
 
   return (
     <section className="min-h-screen overflow-hidden relative flex flex-col">
@@ -60,6 +72,12 @@ export default function HeroSection() {
             <span className="text-white font-semibold text-lg">Sakina AI</span>
 
             <div className="hidden md:flex items-center gap-8 ml-8">
+              <button 
+                onClick={() => handleEnterTherapySession('/chat')}
+                className="text-white/80 hover:text-white text-sm font-medium transition-colors cursor-pointer"
+              >
+                {lang === 'ar' ? 'الجلسة العلاجية' : 'Therapy Session'}
+              </button>
               <Link to="/pricing" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('pricing')}</Link>
               <Link to="/about" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('about')}</Link>
               <Link to="/contact" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('contact')}</Link>
@@ -69,13 +87,16 @@ export default function HeroSection() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setLang(lang === 'en' ? 'ar' : 'en')}
-              className="text-white/60 hover:text-white text-sm font-medium transition-colors"
+              className="text-white/60 hover:text-white text-sm font-medium transition-colors cursor-pointer"
             >
               {lang === 'en' ? 'عربي' : 'EN'}
             </button>
             {isLoggedIn ? (
               <div className="flex items-center gap-4 ml-4">
-                <Link to="/chat" className="flex items-center gap-2 liquid-glass rounded-full pl-2 pr-4 py-1.5 border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:bg-white/10 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                <button 
+                  onClick={() => handleEnterTherapySession('/chat')}
+                  className="flex items-center gap-2 liquid-glass rounded-full pl-2 pr-4 py-1.5 border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:bg-white/10 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                >
                   {user?.picture ? (
                     <img src={user.picture} alt="Profile" className="w-8 h-8 rounded-full border border-white/20 object-cover" />
                   ) : (
@@ -87,15 +108,16 @@ export default function HeroSection() {
                     <span className="text-white text-[13px] font-semibold tracking-wide">{lang === 'ar' ? 'حسابي' : 'My Account'}</span>
                     <span className="text-emerald-400 text-[9px] uppercase font-bold tracking-widest">{lang === 'ar' ? 'باقة فري' : 'Free Plan'}</span>
                   </div>
-                </Link>
+                </button>
                 <button
                   onClick={() => {
                     localStorage.removeItem('sakina_token');
                     localStorage.removeItem('sakina_user');
                     localStorage.removeItem('sakina_active_id_v3');
+                    setIsLoggedIn(false);
                     window.location.reload();
                   }}
-                  className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-2 text-white/60 hover:text-white text-xs font-medium transition-all"
+                  className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-2 text-white/60 hover:text-white text-xs font-medium transition-all cursor-pointer"
                 >
                   {lang === 'ar' ? 'تسجيل الخروج' : 'Sign Out'}
                 </button>
@@ -103,7 +125,7 @@ export default function HeroSection() {
             ) : (
               <button
                 onClick={() => handleGoogleLogin()}
-                className="liquid-glass rounded-full px-6 py-2 text-white text-sm font-medium hover:bg-white/5 transition-colors flex items-center gap-2 ml-4"
+                className="liquid-glass rounded-full px-6 py-2 text-white text-sm font-medium hover:bg-white/5 transition-colors flex items-center gap-2 ml-4 cursor-pointer"
               >
                 <svg viewBox="0 0 24 24" className="w-4 h-4" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -133,17 +155,17 @@ export default function HeroSection() {
           {t('heroDesc')}
         </p>
 
+        {/* Primary CTA: Enter Therapy Session (Requires Sign In) */}
         <div className="flex justify-center mt-2">
-          <Link
-            to="/chat"
-            className="group relative inline-flex items-center gap-3 bg-white rounded-full px-8 py-4 text-black text-base font-semibold hover:bg-white/90 transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+          <button
+            onClick={() => handleEnterTherapySession('/chat')}
+            className="group relative inline-flex items-center gap-3 bg-white rounded-full px-8 sm:px-10 py-4 text-black text-base sm:text-lg font-semibold hover:bg-neutral-100 transition-all hover:scale-105 active:scale-95 shadow-[0_0_35px_rgba(255,255,255,0.3)] cursor-pointer"
           >
-            {t('beginSession')}
+            <span>{lang === 'ar' ? 'دخول الجلسة العلاجية (Enter Therapy Session)' : 'Enter Therapy Session'}</span>
             <ArrowRight className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${lang === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
-          </Link>
+          </button>
         </div>
       </div>
-
 
     </section>
   );

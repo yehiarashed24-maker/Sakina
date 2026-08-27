@@ -24,11 +24,11 @@ logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 logger = logging.getLogger('run')
 
 steps = [
-    ('DISCOVERY', ['python', str(SCRIPTS / 'inspect_pdfs.py')]),
-    ('INGESTION', ['python', str(SCRIPTS / 'ingest_pdfs.py')]),
-    ('CHUNKING', ['python', str(SCRIPTS / 'chunk_documents.py')]),
-    ('EMBEDDING', ['python', str(SCRIPTS / 'generate_embeddings.py')]),
-    ('VALIDATION', ['python', str(SCRIPTS / 'validate_data.py')])
+    ('DISCOVERY', [sys.executable, str(SCRIPTS / 'inspect_pdfs.py')]),
+    ('INGESTION', [sys.executable, str(SCRIPTS / 'ingest_pdfs.py')]),
+    ('CHUNKING', [sys.executable, str(SCRIPTS / 'chunk_documents.py')]),
+    ('EMBEDDING', [sys.executable, str(SCRIPTS / 'generate_embeddings.py')]),
+    ('VALIDATION', [sys.executable, str(SCRIPTS / 'validate_data.py')])
 ]
 
 if __name__ == '__main__':

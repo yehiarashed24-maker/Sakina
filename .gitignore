@@ -16,9 +16,17 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 .idea
+.DS_Store
+*.DS_Store
+.env
+.env.*
+!.env.example
+.venv/
+sakina-rag/.venv/
+sakina-rag/chroma_db/
+
 # Media files
 *.mp4
 *.mov
-
 
 !public/videos/*.mp4

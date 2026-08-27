@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import Hls from 'hls.js';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import Hls from 'hls.js';
 import { useLanguage } from '../context/LanguageContext';
 
 const translations = {
@@ -338,6 +338,11 @@ export default function AboutPage() {
   const { lang } = useLanguage();
   const t = lang === 'ar' ? translations.ar : translations.en;
 
+  const lastWheelTime = useRef(0);
+  const touchStartY = useRef(0);
+  const touchStartX = useRef(0);
+
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
@@ -348,28 +353,114 @@ export default function AboutPage() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [totalSlides]);
+
+  // Mouse wheel / trackpad scroll navigation with debounce
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      const now = Date.now();
+      if (now - lastWheelTime.current < 550) return; // 550ms debounce
+      if (Math.abs(e.deltaY) > 15) {
+        lastWheelTime.current = now;
+        if (e.deltaY > 0) {
+          setActiveSlide(s => Math.min(s + 1, totalSlides - 1));
+        } else {
+          setActiveSlide(s => Math.max(s - 1, 0));
+        }
+      }
+    };
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [totalSlides]);
+
+  // Touch swipe navigation for mobile / touchscreen
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY;
+      touchStartX.current = e.touches[0].clientX;
+    };
+    const handleTouchEnd = (e: TouchEvent) => {
+      const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+      const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+      if (Math.abs(deltaY) > 40 || Math.abs(deltaX) > 40) {
+        if (deltaY < -40 || (lang === 'ar' ? deltaX > 40 : deltaX < -40)) {
+          setActiveSlide(s => Math.min(s + 1, totalSlides - 1));
+        } else if (deltaY > 40 || (lang === 'ar' ? deltaX < -40 : deltaX > 40)) {
+          setActiveSlide(s => Math.max(s - 1, 0));
+        }
+      }
+    };
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [lang, totalSlides]);
 
   return (
-    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={`w-screen h-screen bg-black overflow-hidden relative ${lang === 'ar' ? 'font-arabic' : 'font-sans'}`}>
-      <Link to="/" className="absolute top-8 left-1/2 -translate-x-1/2 z-50 text-white/50 hover:text-white transition-colors flex items-center gap-2 px-6 py-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-white/10 text-sm font-medium" style={lang === 'ar' ? { flexDirection: 'row-reverse' } : {}}>
-        <ArrowLeft className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /> {t.back}
+    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={`w-screen h-screen bg-black overflow-hidden relative select-none ${lang === 'ar' ? 'font-arabic' : 'font-sans'}`}>
+      {/* Top Bar: Back to Home */}
+      <Link to="/" className="absolute top-6 left-1/2 -translate-x-1/2 z-50 text-white/70 hover:text-white transition-all flex items-center gap-2 px-6 py-2.5 rounded-full bg-black/50 backdrop-blur-xl border border-white/15 hover:bg-white/10 hover:border-white/30 text-sm font-medium shadow-2xl">
+        <ArrowLeft className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
+        <span>{t.back}</span>
       </Link>
 
+      {/* Slide Views */}
       <Slide1 isActive={activeSlide === 0} t={t} lang={lang} />
       <Slide2 isActive={activeSlide === 1} t={t} lang={lang} />
       <Slide3 isActive={activeSlide === 2} t={t} lang={lang} />
       <Slide4 isActive={activeSlide === 3} t={t} lang={lang} />
       <Slide5 isActive={activeSlide === 4} t={t} lang={lang} />
 
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2" style={lang === 'ar' ? { flexDirection: 'row-reverse' } : {}}>
-        {Array.from({ length: totalSlides }).map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setActiveSlide(i)}
-            className={`transition-all duration-300 rounded-full ${i === activeSlide ? 'bg-white w-6 h-2' : 'bg-white/40 w-2 h-2'}`}
-          />
-        ))}
+      {/* Floating Side Arrow: Previous */}
+      {activeSlide > 0 && (
+        <button
+          onClick={() => setActiveSlide(s => Math.max(s - 1, 0))}
+          className={`absolute top-1/2 -translate-y-1/2 z-40 p-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white/80 hover:text-white backdrop-blur-xl transition-all cursor-pointer shadow-lg ${
+            lang === 'ar' ? 'right-6' : 'left-6'
+          }`}
+          title={lang === 'ar' ? 'السابق' : 'Previous'}
+        >
+          {lang === 'ar' ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-6 h-6" />}
+        </button>
+      )}
+
+      {/* Floating Side Arrow: Next */}
+      {activeSlide < totalSlides - 1 && (
+        <button
+          onClick={() => setActiveSlide(s => Math.min(s + 1, totalSlides - 1))}
+          className={`absolute top-1/2 -translate-y-1/2 z-40 p-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-white/80 hover:text-white backdrop-blur-xl transition-all cursor-pointer shadow-lg ${
+            lang === 'ar' ? 'left-6' : 'right-6'
+          }`}
+          title={lang === 'ar' ? 'التالي' : 'Next'}
+        >
+          {lang === 'ar' ? <ChevronLeft className="w-6 h-6" /> : <ChevronRight className="w-6 h-6" />}
+        </button>
+      )}
+
+      {/* Bottom Bar: Slide Indicators & Hint */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur-lg border border-white/10">
+          {Array.from({ length: totalSlides }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveSlide(i)}
+              className={`transition-all duration-300 rounded-full cursor-pointer ${
+                i === activeSlide 
+                  ? 'bg-white w-8 h-2 shadow-[0_0_10px_rgba(255,255,255,0.7)]' 
+                  : 'bg-white/30 hover:bg-white/60 w-2 h-2'
+              }`}
+            />
+          ))}
+          <span className="text-[11px] font-mono text-white/50 ml-2 tracking-widest">
+            0{activeSlide + 1} / 0{totalSlides}
+          </span>
+        </div>
+
+        <span className="text-[10px] text-white/30 tracking-wider hidden sm:block">
+          {lang === 'ar' ? 'مرر بالفأرة أو استخدم الأسهم للتنقل' : 'Scroll or use arrows to explore'}
+        </span>
       </div>
     </div>
   );

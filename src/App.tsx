@@ -37,7 +37,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/chat" element={<ChatPage initialMode="chat" />} />
+            <Route path="/talk" element={<ChatPage initialMode="talk" />} />
             <Route path="/contact" element={<ContactPage />} />
           </Routes>
         </Router>

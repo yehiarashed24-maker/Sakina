@@ -25,6 +25,17 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
             "model": "gemini-3.6-flash"
         },
         {
+            "name": "OpenRouter Laguna",
+            "url": "https://openrouter.ai/api/v1/chat/completions",
+            "headers": {
+                "Authorization": f"Bearer {openrouter_api_key}",
+                "HTTP-Referer": settings.BACKEND_URL,
+                "X-Title": "Sakina AI RAG Backend",
+                "Content-Type": "application/json"
+            },
+            "model": "poolside/laguna-s-2.1:free"
+        },
+        {
             "name": "OpenRouter Free",
             "url": "https://openrouter.ai/api/v1/chat/completions",
             "headers": {
@@ -58,10 +69,10 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
     ar_chars = len(re.findall(r'[\u0600-\u06FF]', query))
     
     query_suffix = ""
-    if eng_chars > ar_chars and eng_chars > 0:
-        query_suffix = "\n\n[CRITICAL SYSTEM INSTRUCTION: The user is speaking ENGLISH. You MUST reply ENTIRELY in English. Do NOT use Arabic.]"
-    elif ar_chars > eng_chars and ar_chars > 0:
-        query_suffix = "\n\n[CRITICAL SYSTEM INSTRUCTION: The user is speaking ARABIC. You MUST reply ENTIRELY in Arabic.]"
+    if ar_chars > 0:
+        query_suffix = "\n\n[CRITICAL SYSTEM INSTRUCTION: The user is speaking ARABIC. You MUST reply ENTIRELY in Arabic. Be warm, empathetic, and concise in 1 to 3 short sentences.]"
+    elif eng_chars > 0:
+        query_suffix = "\n\n[CRITICAL SYSTEM INSTRUCTION: The user is speaking ENGLISH. You MUST reply ENTIRELY in English. Be warm, empathetic, and concise in 1 to 3 short sentences.]"
 
     # We always ensure the latest query is appended at the end
     messages.append({"role": "user", "content": query + query_suffix})
@@ -96,9 +107,12 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
                     
                     reply = clean_reply.strip()
                     
-                    if reply and reply.strip():
+                    if reply and reply.strip() and not reply.lower().startswith("user safety"):
                         print(f"✅ LLM Endpoint {ep['name']} generated response successfully!")
                         break
+                    else:
+                        print(f"⚠️ Endpoint {ep['name']} returned invalid reply ({reply}), trying next endpoint...")
+                        reply = ""
                 else:
                     print(f"❌ Endpoint {ep['name']} HTTP Error status: {response.status_code}, body: {response.text}")
             except Exception as err:
@@ -119,33 +133,38 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
         else:
             reply = "أعتذر، ليس لدي معلومات موثقة حول هذا الموضوع في المراجع الطبية المتاحة لي حالياً."
 
-    # Check if the LLM declared it used the context
-    used_context = "[USED_CONTEXT]" in reply
-    if used_context:
-        reply = reply.replace("[USED_CONTEXT]", "").strip()
+    # Medical/psychological terms indicating a factual domain answer
+    med_keywords = [
+        "اضطراب", "أعراض", "علاج", "نفسي", "وسواس", "فرط", "انتباه", "اكتئاب", "هلع", "قلق", "صدمة", "ثنائي القطب", "ذهان", "أدوية", "سلوك",
+        "disorder", "symptom", "treatment", "anxiety", "depression", "adhd", "ocd", "ptsd", "bipolar", "psychosis", "therapy"
+    ]
+    is_medical_content = any(kw in reply.lower() for kw in med_keywords) or len(reply) > 250
 
-    # Check if the reply is a refusal for an out-of-scope query
+    # Short pure greetings filter (greetings are under 250 chars and have no medical keywords)
+    greeting_phrases = [
+        "أهلاً", "اهلا", "مرحباً", "مرحبا", "ازيك", "عامل ايه", "اخبارك", "أخبارك",
+        "كيف حالك", "كيفك", "شلونك", "صباح", "مساء", "السلام عليكم",
+        "hello", "hi", "hey", "how are you", "welcome to sakina"
+    ]
+    is_greeting = any(p in query.lower() for p in ["ازيك", "عامل ايه", "اخبارك", "كيف حالك", "كيفك", "مرحبا", "اهلا", "hello", "hi"]) or (len(reply) < 250 and any(p in reply.lower() for p in greeting_phrases) and not any(kw in reply.lower() for kw in med_keywords))
+
+    # Check if the reply is a refusal or apology for an out-of-scope query
     refusal_keywords = [
-        "specialized exclusively in mental health",
-        "متخصص حصرياً في الصحة النفسية",
-        "خارج نطاق تخصصي",
-        "outside of this domain",
-        "outside my domain",
-        "out_of_scope_no_context",
-        "ليس لدي معلومات موثقة حول هذا الموضوع",
-        "i do not have documented information about this specific topic"
+        "أعتذر", "اعتذر", "apologize", "apologies", "sorry",
+        "تخصصي يقتصر", "متخصص حصرياً", "specialized exclusively",
+        "خارج نطاق", "outside", "out_of_scope",
+        "ليس لدي معلومات", "do not have documented information",
+        "غير متاح", "لا أستطيع الإجابة", "لا يمكنني"
     ]
     is_refusal = any(kw.lower() in reply.lower() for kw in refusal_keywords)
 
-    # Append citation ONLY if the LLM confirmed it used context, and it's not a refusal
-    if sources and used_context and not is_refusal:
+    # Append citation for ANY medical response with retrieved sources (never on greetings or refusals)
+    if sources and not is_refusal and not is_greeting and is_medical_content:
         base_url = getattr(settings, 'BACKEND_URL', 'http://localhost:8000').rstrip('/')
         citation_lines = []
         for src in sources:
             src_name = src.get('source', '')
-            
-            # Skip the internal KB from citations
-            if src_name == 'mental_health_rag_kb.pdf':
+            if not src_name:
                 continue
                 
             src_page = src.get('page', 1)
@@ -155,6 +174,7 @@ async def generate_sakina_response(query: str, context: str, sources: List[Dict[
         
         if citation_lines:
             citation = "\n\n📚 **المراجع**: " + " | ".join(citation_lines)
-            reply += citation
+            if citation not in reply:
+                reply += citation
     
     return reply

@@ -37,10 +37,12 @@ async def add_security_headers(request: Request, call_next):
     csp = (
         "default-src 'self'; "
         "script-src 'self' 'unsafe-inline' https://accounts.google.com; "
-        "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data: https:; "
-        "media-src 'self' blob: https://stream.mux.com https://*.cloudfront.net; "
-        "connect-src 'self' https://formspree.io https://accounts.google.com; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com data:; "
+        "img-src 'self' data: https: blob:; "
+        "media-src 'self' blob: https://stream.mux.com https://*.mux.com https://*.cloudfront.net; "
+        "connect-src 'self' https://formspree.io https://accounts.google.com https://stream.mux.com https://*.mux.com; "
+        "worker-src 'self' blob:; "
         "frame-src https://accounts.google.com;"
     )
     response.headers["Content-Security-Policy"] = csp
@@ -86,7 +88,11 @@ if os.path.exists(frontend_dir):
         if os.path.isfile(file_path):
             return FileResponse(file_path)
         
-        # Fallback to index.html for SPA routing
-        return FileResponse(os.path.join(frontend_dir, "index.html"))
+        # Fallback to index.html for SPA routing with no-cache headers
+        response = FileResponse(os.path.join(frontend_dir, "index.html"))
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
 else:
     print(f"Warning: Frontend build directory not found at {frontend_dir}")

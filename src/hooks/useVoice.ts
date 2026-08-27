@@ -26,7 +26,7 @@ export function useVoice() {
     if (!recognitionRef.current) return;
 
     const recognition = recognitionRef.current;
-    recognition.lang = lang === 'ar' ? 'ar-EG' : 'en-US';
+    recognition.lang = lang === 'ar' ? 'ar-SA' : 'en-US';
 
     recognition.onstart = () => {
       setIsListening(true);
@@ -77,25 +77,56 @@ export function useVoice() {
 
     window.speechSynthesis.cancel(); // stop previous speech
 
-    // Clean markdown text for clear speech
-    const cleanText = text
-      .replace(/[*_#`~]/g, '')
-      .replace(/\[.*?\]\(.*?\)/g, '')
+    // 1. Cut off citations and references entirely (never read out pdf filenames)
+    const pureText = text.split(/📚|\*\*المراجع\*\*|\bالمراجع\b|\bReferences\b/i)[0];
+
+    const cleanText = pureText
+      .replace(/https?:\/\/\S+/g, '')
+      .replace(/\b[\w.-]+\.pdf\b/gi, '')
+      .replace(/\(صـ?\s*\d+\)/g, '')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/[*_#`~>•\-–]/g, ' ')
+      .replace(/[{}|[\]\\]/g, ' ')
+      .replace(/\s+/g, ' ')
       .trim();
 
     if (!cleanText) return;
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = lang === 'ar' ? 'ar-SA' : 'en-US';
-    utterance.rate = 0.95; // calm, peaceful tone
-    utterance.pitch = 1.0;
 
-    // Try to pick a natural soothing voice
+    // Female Voice Selection Logic (Sakina)
     const voices = window.speechSynthesis.getVoices();
-    const targetLang = lang === 'ar' ? 'ar' : 'en';
-    const preferredVoice = voices.find(v => v.lang.startsWith(targetLang) && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Siri')));
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
+    let selectedVoice: SpeechSynthesisVoice | null = null;
+
+    if (lang === 'ar') {
+      const arFemaleNames = ['laila', 'mariam', 'salma', 'fatima', 'zariyah', 'mona', 'hoda', 'nour', 'amira', 'female'];
+      selectedVoice = voices.find(v => v.lang.startsWith('ar') && arFemaleNames.some(fn => v.name.toLowerCase().includes(fn))) || null;
+
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.startsWith('ar')) || null;
+      }
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        const isKnownMale = selectedVoice.name.toLowerCase().includes('maged') || selectedVoice.name.toLowerCase().includes('majed');
+        utterance.pitch = isKnownMale ? 1.25 : 1.15;
+        utterance.rate = isKnownMale ? 1.02 : 0.98;
+      } else {
+        utterance.pitch = 1.2;
+        utterance.rate = 1.0;
+      }
+    } else {
+      const enFemaleNames = ['samantha', 'victoria', 'karen', 'zira', 'jenny', 'female', 'natural'];
+      selectedVoice = voices.find(v => v.lang.startsWith('en') && enFemaleNames.some(fn => v.name.toLowerCase().includes(fn))) || null;
+
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.startsWith('en')) || null;
+      }
+
+      if (selectedVoice) utterance.voice = selectedVoice;
+      utterance.pitch = 1.12;
+      utterance.rate = 0.96;
     }
 
     utterance.onstart = () => setIsSpeaking(true);

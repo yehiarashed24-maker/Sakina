@@ -26,6 +26,7 @@ export interface Conversation {
 
 interface ChatContextType {
   conversations: Conversation[];
+  setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>;
   activeConvId: string | null;
   activeConversation: Conversation | null;
   messages: ChatMessage[];
@@ -258,6 +259,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   return (
     <ChatContext.Provider value={{
       conversations,
+      setConversations,
       activeConvId,
       activeConversation,
       messages: activeConversation.messages,

@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { Send, Mic } from 'lucide-react';
+import { Send, Mic, PhoneCall } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import TiltCard from './TiltCard';
 import BackgroundVideo from './BackgroundVideo';
 import { useLanguage } from '../context/LanguageContext';
@@ -87,19 +88,31 @@ export default function SakinaChatSection() {
       >
         <TiltCard className="liquid-glass rounded-3xl md:rounded-[40px] flex flex-col h-[75vh] md:h-[80vh] shadow-2xl shadow-white/5 border border-white/10">
 
-          {/* Chat Header */}
+          {/* Chat Header with Voice Call Link */}
           <div className="p-6 md:p-8 flex justify-between items-center border-b border-white/10 bg-black/20">
             <div className="flex flex-col">
               <h3 className="text-white text-2xl md:text-3xl font-instrument italic tracking-tight">Sakina AI</h3>
               <span className="text-white/40 text-sm font-medium mt-1">سكينة</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 liquid-glass rounded-full">
-              <motion.div
-                animate={{ opacity: [1, 0.5, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-2 h-2 rounded-full bg-emerald-400"
-              />
-              <span className="text-white/80 text-xs font-semibold tracking-widest uppercase">{t('online')}</span>
+
+            <div className="flex items-center gap-3">
+              {/* Direct Voice Call Session link */}
+              <Link
+                to="/talk"
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white text-black font-semibold text-xs shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:bg-neutral-100 transition-all hover:scale-105 active:scale-95"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>{lang === 'ar' ? 'مكالمة صوتية' : 'Voice Call'}</span>
+              </Link>
+
+              <div className="flex items-center gap-2 px-4 py-2 liquid-glass rounded-full">
+                <motion.div
+                  animate={{ opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="w-2 h-2 rounded-full bg-emerald-400"
+                />
+                <span className="text-white/80 text-xs font-semibold tracking-widest uppercase">{t('online')}</span>
+              </div>
             </div>
           </div>
 
@@ -177,9 +190,13 @@ export default function SakinaChatSection() {
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               />
 
-              <button className="p-3 text-white/50 hover:text-white transition-colors">
-                <Mic className="w-5 h-5" />
-              </button>
+              <Link
+                to="/talk"
+                title={lang === 'ar' ? 'بدء المكالمة الصوتية' : 'Start Voice Call'}
+                className="p-3 text-cyan-300 hover:text-white hover:bg-white/10 rounded-full transition-all"
+              >
+                <Mic className="w-5 h-5 animate-pulse" />
+              </Link>
 
               <button
                 onClick={handleSend}

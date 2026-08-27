@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
+import { ArrowRight, Mic, MessageSquare } from 'lucide-react';
 import BackgroundVideo from './BackgroundVideo';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -9,6 +10,42 @@ export default function CTASection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const { t, lang } = useLanguage();
+  const navigate = useNavigate();
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const API_BASE_URL = import.meta.env.VITE_API_URL || "";
+        const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ credential: tokenResponse.access_token })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem('sakina_token', data.access_token);
+          if (data.user) {
+            localStorage.setItem('sakina_user', JSON.stringify(data.user));
+          }
+          window.dispatchEvent(new Event('sakina:login'));
+          navigate('/chat');
+        }
+      } catch (err) {
+        console.error("Error connecting to auth API", err);
+      }
+    },
+    onError: () => {
+      console.error('Google Login Failed');
+    }
+  });
+
+  const handleEnterSession = (targetPath: string) => {
+    if (localStorage.getItem('sakina_token')) {
+      navigate(targetPath);
+    } else {
+      handleGoogleLogin();
+    }
+  };
 
   return (
     <section ref={ref} className="bg-black py-32 md:py-48 px-6 overflow-hidden relative flex flex-col items-center justify-center min-h-[70vh]">
@@ -42,14 +79,16 @@ export default function CTASection() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
           transition={{ duration: 0.6, delay: 0.4 }}
+          className="flex justify-center"
         >
-          <Link 
-            to="/chat" 
-            className="group relative inline-flex items-center gap-4 bg-white rounded-full px-10 py-5 text-black text-lg font-semibold hover:bg-white/90 transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+          {/* Primary Therapy Session Button */}
+          <button 
+            onClick={() => handleEnterSession('/chat')}
+            className="group relative inline-flex items-center gap-3 bg-white rounded-full px-8 sm:px-10 py-4 sm:py-5 text-black text-base sm:text-lg font-semibold hover:bg-neutral-100 transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.3)] cursor-pointer"
           >
-            {t('beginSession')}
+            <span>{lang === 'ar' ? 'دخول الجلسة العلاجية (Enter Therapy Session)' : 'Enter Therapy Session'}</span>
             <ArrowRight className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${lang === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
-          </Link>
+          </button>
         </motion.div>
       </div>
     </section>
