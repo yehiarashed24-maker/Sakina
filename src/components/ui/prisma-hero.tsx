@@ -84,8 +84,6 @@ export const WordsPullUpMultiStyle = ({ segments, className = "", style }: Words
 };
 
 /* ---------------- Hero ---------------- */
-const navItems = ["Features", "Pricing", "About", "Chat"];
-
 interface PrismaHeroProps {
   children?: React.ReactNode;
 }
@@ -117,7 +115,7 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
             className={`flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 hover:bg-white/10 ${lang === 'ar' ? 'flex-row-reverse font-arabic' : 'font-sans'}`}
           >
             <ArrowRight className={`w-4 h-4 ${lang === 'ar' ? '' : 'rotate-180'}`} />
-            <span className="text-sm font-medium">{lang === 'ar' ? 'العودة للرئيسية' : 'Back to Home'}</span>
+            <span className="text-sm font-medium">{lang === 'ar' ? 'ارجع للرئيسية' : 'Back to Home'}</span>
           </Link>
         </div>
 
@@ -146,7 +144,7 @@ const PrismaHero = ({ children }: PrismaHeroProps) => {
                 dir={lang === 'ar' ? 'rtl' : 'ltr'}
               >
                 {lang === 'ar'
-                  ? 'لو بتواجه أي مشكلة، إحنا هنا عشان نسمعك ونساعدك. تواصل معنا في أي وقت.'
+                  ? 'لو بتواجه أي مشكلة، إحنا هنا عشان نسمعك ونساعدك. كلمنا في أي وقت.'
                   : 'If you are facing any problem, we are here to listen and help. Contact us anytime.'}
               </motion.p>
 

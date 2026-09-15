@@ -3,8 +3,9 @@ Lightweight on-disk VectorStore using numpy for embeddings and JSONL for metadat
 Provides add, upsert, similarity_search, delete, reset, count, health.
 This avoids external DB dependencies and is deterministic and portable.
 """
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple, Any
 import os
+import re
 from pathlib import Path
 import numpy as np
 import json
@@ -38,14 +39,18 @@ class VectorStore:
                 self.ids = []
             self.metadatas = []
             if self.metadatas_path.exists():
-                for line in self.metadatas_path.open('r', encoding='utf-8'):
-                    self.metadatas.append(json.loads(line))
+                with self.metadatas_path.open('r', encoding='utf-8') as f:
+                    for line in f:
+                        if line.strip():
+                            self.metadatas.append(json.loads(line))
             else:
                 self.metadatas = []
             self.documents = []
             if self.documents_path.exists():
-                for line in self.documents_path.open('r', encoding='utf-8'):
-                    self.documents.append(json.loads(line))
+                with self.documents_path.open('r', encoding='utf-8') as f:
+                    for line in f:
+                        if line.strip():
+                            self.documents.append(json.loads(line))
             else:
                 self.documents = []
             if self.embeddings_path.exists():
@@ -114,10 +119,10 @@ class VectorStore:
     def similarity_search(self, query_embedding: List[float], top_k: int = 5, filter: Optional[Dict] = None):
         if self.embeddings_norm is None or getattr(self.embeddings_norm, 'size', 0) == 0:
             return {'ids': [], 'distances': [], 'metadatas': [], 'documents': []}
-        
+
         q = np.array(query_embedding, dtype=np.float32)
         q_norm = q / (np.linalg.norm(q) + 1e-12)
-        
+
         # Fast dot product on pre-normalized arrays
         with self.lock:
             sims = (self.embeddings_norm @ q_norm).astype(float)
@@ -127,7 +132,7 @@ class VectorStore:
             distances = [float(sims[i]) for i in topk_idx]
             metadatas = [self.metadatas[i] for i in topk_idx]
             documents = [self.documents[i] for i in topk_idx]
-            
+
         return {'ids': ids, 'distances': distances, 'metadatas': metadatas, 'documents': documents}
 
     def delete(self, ids: List[str]):
@@ -182,55 +187,190 @@ def get_embedder():
         _embedder = get_provider('sentence_transformers', settings.EMBEDDING_MODEL_NAME)
     return _embedder
 
-def retrieve_relevant_context(query: str, k: int = 4):
+from app.rag.evidence_gate import (
+    assess_retrieval_evidence,
+    normalize_cosine_similarity,
+    EvidenceAssessment,
+    MIN_RETRIEVAL_SCORE
+)
+
+# Feature Flag: Reranking Architecture (Prepared for Hackathon expansion)
+# When False: Reranking is explicitly documented as 'Not Enabled'
+ENABLE_RERANKER = False
+
+def optional_reranker(query: str, candidate_chunks: List[Dict[str, Any]], top_k: int) -> List[Dict[str, Any]]:
+    """
+    Reranking hook.
+    If ENABLE_RERANKER is activated, candidates (Top 12-20) are re-scored
+    via a cross-encoder before the final Top-K selection.
+    Currently: Preserves pure embedding retrieval order.
+    """
+    if not ENABLE_RERANKER:
+        return candidate_chunks[:top_k]
+    # Future extension point: CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+    return candidate_chunks[:top_k]
+
+
+def normalize_mental_health_query(query: str) -> str:
+    """
+    Normalizes common Arabic mental health typos and dialectal expressions
+    prior to embedding retrieval to ensure accurate document matching.
+    """
+    q = query
+    # Social Anxiety & Fear of People / Phobia
+    q = re.sub(r'\b(بخاف من الناس|خوف من الناس|الخوف من الناس|رهاب اجتماعي|قلق اجتماعي)\b', 'قلق ورهاب اجتماعي Social Anxiety', q)
+    q = re.sub(r'\b(خوف|بخاف|خايف|خايفة|مرعوب|مرعوبة|رهاب)\b', 'قلق وخوف Anxiety and Fear', q)
+    # Depression variations (e.g. اكتابب, اكتاب, مكتئب)
+    q = re.sub(r'\b(اكتابب|اكتاب|إكتاب|اكتأب|إكتأب|كتابب|اكتياب|إكتياب|الكتئاب|الاكتاب|مكتئب|مكتئبه)\b', 'اكتئاب', q)
+    # Anxiety and panic
+    q = re.sub(r'\b(بانيك|هلع|قلقان|قلقانه|متوتر|متوتره)\b', 'قلق وهلع', q)
+    # OCD
+    q = re.sub(r'\b(وسوااس|وسوسه|وسواس قهري)\b', 'وسواس قهري', q)
+    # PTSD
+    q = re.sub(r'\b(تروما|صدمه نفسيه|صدمة نفسية)\b', 'صدمة نفسية PTSD', q)
+    return q
+
+
+def is_pure_greeting(query: str) -> bool:
+    q = query.lower().strip().strip(".!؟?، ")
+    greetings = {
+        "اهلا", "أهلا", "مرحبا", "هاي", "هالو", "يا هلا", "هلا",
+        "ازيك", "إزيك", "ازيك يا سكينة", "إزيك يا سكينة",
+        "عامل ايه", "عاملة ايه", "عاملين ايه", "اخبارك", "أخبارك",
+        "صباح الخير", "صباح النور", "مساء الخير", "مساء النور",
+        "السلام عليكم", "سلام عليكم", "hello", "hi", "hey",
+        "good morning", "good evening", "how are you",
+        "ولد", "أنا ولد", "انا ولد", "بنت", "أنا بنت", "انا بنت",
+        "راجل", "أنا راجل", "انا راجل", "ست", "أنا ست", "انا ست",
+        "شاب", "أنا شاب", "انا شاب", "بنوتة", "بنوته", "أنا بنوتة",
+        "كلميني كولد", "كلميني كبنت", "صيغة ولد", "صيغة بنت",
+        "ولد يا سكينة", "بنت يا سكينة"
+    }
+    return q in greetings
+
+def retrieve_relevant_context(query: str, k: int = 4) -> Tuple[str, List[Dict[str, Any]], List[Dict[str, Any]], EvidenceAssessment]:
+    """
+    Retrieves evidence-grounded chunks with full transparent metadata:
+    - Cosine similarity raw_score
+    - Calibrated normalized_relevance percentage
+    - Qualitative indicator (VERY HIGH, HIGH, MODERATE, LOW)
+    - Deterministic source rank and chunk ID
+
+    Returns:
+    (context_text, backward_compatible_sources, detailed_sources, evidence_assessment)
+    """
+    if is_pure_greeting(query):
+        assessment = EvidenceAssessment(
+            strength="NOT_APPLICABLE",
+            score=0,
+            is_sufficient=False,
+            top_score=0.0,
+            avg_score=0.0,
+            chunk_count=0,
+            source_count=0,
+            is_conversational=True,
+            reason="Conversational greeting without medical inquiry."
+        )
+        return "", [], [], assessment
+
+    from app.rag.evidence_gate import is_conversational_query
+    is_conv = is_conversational_query(query)
     store = get_vectorstore()
     embedder = get_embedder()
-    
-    # 1. Embed query
-    query_emb = embedder.embed_texts([query])[0]
-    
-    # 2. Search. We fetch more results initially to allow for deduplication.
-    results = store.similarity_search(query_emb, top_k=k*2)
-    
-    docs = []
-    sources = []
-    seen_sources = set()
+
+    # 1. Embed query into 384d multilingual semantic space (with query normalization)
+    normalized_query = normalize_mental_health_query(query)
+    query_emb = embedder.embed_texts([normalized_query])[0]
+
+    # 2. Candidate Retrieval: Fetch 3x candidates (Top-12) for reranker / deduplication
+    candidate_k = max(k * 3, 12)
+    results = store.similarity_search(query_emb, top_k=candidate_k)
+
+    raw_candidates = []
     seen_texts = set()
-    
-    # Relevance Threshold: Only keep results with a strong cosine similarity (> 0.35)
-    # This prevents retrieving unrelated sources when the user asks off-topic or general greeting questions.
-    RELEVANCE_THRESHOLD = 0.35
-    
-    for i in range(len(results['documents'])):
-        if len(docs) >= k:
-            break
-            
-        distance = results['distances'][i]
-        if distance < RELEVANCE_THRESHOLD:
-            continue
-            
-        doc_text = results['documents'][i]
-        
+
+    total_found = len(results.get('documents', []))
+    for i in range(total_found):
+        raw_score = float(results['distances'][i])
+        doc_text = results['documents'][i].strip()
+
         # Deduplication
-        if doc_text in seen_texts:
+        if not doc_text or len(doc_text.split()) < 25 or doc_text in seen_texts or raw_score < MIN_RETRIEVAL_SCORE:
             continue
         seen_texts.add(doc_text)
-        
-        metadata = results['metadatas'][i]
-        docs.append(doc_text)
-        
-        source_name = metadata.get("filename", "Mental Health KB")
-        page_num = metadata.get("page_start", 1)
+
+        metadata = results['metadatas'][i] if i < len(results['metadatas']) else {}
+        chunk_id = results['ids'][i] if i < len(results['ids']) else f"chunk-{i}"
+
+        filename = metadata.get("filename", "")
+        if not filename or not metadata.get("page_start"):
+            continue
+        page_start = int(metadata.get("page_start", 1))
+
+        # Filter out the index/keywords page (Page 1) of the medical KB
+        if filename == "mental_health_rag_kb.pdf" and page_start == 1:
+            continue
+
         topic_name = metadata.get("topic", "Mental Wellness")
-        
-        src_key = f"{source_name}-page{page_num}-{topic_name}"
-        if src_key not in seen_sources:
-            seen_sources.add(src_key)
-            sources.append({
-                "source": source_name,
-                "page": page_num,
-                "topic": topic_name
-            })
-            
-    context_text = "\n\n---\n\n".join(docs)
-    return context_text, sources
+
+        # Document title clean-up for UI display
+        doc_title = filename.replace(".pdf", "").replace("-", " ").replace("_", " ").title()
+
+        # Clean excerpt for evidence panel preview
+        excerpt = " ".join(doc_text.split()[:45]) + ("..." if len(doc_text.split()) > 45 else "")
+
+        norm_rel, qual_rel = normalize_cosine_similarity(raw_score)
+
+        raw_candidates.append({
+            "chunk_id": chunk_id,
+            "raw_score": round(raw_score, 4),
+            "normalized_relevance": norm_rel,
+            "qualitative_relevance": qual_rel,
+            "filename": filename,
+            "document": filename,
+            "document_title": doc_title,
+            "page": page_start,
+            "page_start": page_start,
+            "topic": topic_name,
+            "text": doc_text,
+            "excerpt": excerpt
+        })
+
+    # 3. Optional Reranking Layer (Candidates Top-12 -> Final Top-K)
+    final_chunks = optional_reranker(query, raw_candidates, top_k=k)
+
+    # Assign ranks
+    detailed_sources = []
+    backward_compatible_sources = []
+    formatted_docs = []
+
+    for idx, chunk in enumerate(final_chunks):
+        rank = idx + 1
+        chunk_data = {**chunk, "rank": rank}
+        detailed_sources.append(chunk_data)
+
+        # For backward compatibility with existing ChatResponse model
+        backward_compatible_sources.append({
+            "source": chunk["filename"],
+            "page": chunk["page"],
+            "topic": chunk["topic"],
+            "rank": rank,
+            "raw_score": chunk["raw_score"],
+            "normalized_relevance": chunk["normalized_relevance"],
+            "qualitative_relevance": chunk["qualitative_relevance"]
+        })
+
+        # Structured representation for LLM prompt
+        formatted_docs.append(
+            f"[SOURCE {rank}]\n"
+            f"Document: {chunk['filename']} (Page {chunk['page']})\n"
+            f"Topic: {chunk['topic']}\n"
+            f"Evidence Excerpt:\n{chunk['text']}"
+        )
+
+    context_text = "\n\n---\n\n".join(formatted_docs)
+
+    # 4. Assess Evidence Strength & Gate
+    evidence_assessment = assess_retrieval_evidence(query, detailed_sources)
+
+    return context_text, backward_compatible_sources, detailed_sources, evidence_assessment

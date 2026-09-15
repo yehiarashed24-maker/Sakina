@@ -30,7 +30,7 @@ export default function ContactPage() {
       } else {
         setStatus('error');
       }
-    } catch (error) {
+    } catch {
       setStatus('error');
     }
   };
@@ -61,7 +61,7 @@ export default function ContactPage() {
                 name="email"
                 required
                 className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all"
-                placeholder={lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
+                placeholder={lang === 'ar' ? 'الإيميل' : 'Email Address'}
               />
             </div>
             
@@ -81,8 +81,8 @@ export default function ContactPage() {
               className="w-full bg-white text-black font-semibold rounded-lg px-3 py-2 text-sm hover:bg-white/90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {status === 'submitting' ? (lang === 'ar' ? 'جاري الإرسال...' : 'Sending...') : 
-               status === 'success' ? (lang === 'ar' ? 'تم الإرسال بنجاح!' : 'Sent Successfully!') :
-               status === 'error' ? (lang === 'ar' ? 'حدث خطأ، حاول مرة أخرى' : 'Error sending. Try again.') :
+               status === 'success' ? (lang === 'ar' ? 'رسالتك اتبعتت!' : 'Sent Successfully!') :
+               status === 'error' ? (lang === 'ar' ? 'حصلت مشكلة، جرّب تاني' : 'Error sending. Try again.') :
                (lang === 'ar' ? 'إرسال الرسالة' : 'Send Message')}
             </button>
           </form>

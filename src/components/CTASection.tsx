@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
-import { ArrowRight, Mic, MessageSquare } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import BackgroundVideo from './BackgroundVideo';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -86,7 +86,7 @@ export default function CTASection() {
             onClick={() => handleEnterSession('/chat')}
             className="group relative inline-flex items-center gap-3 bg-white rounded-full px-8 sm:px-10 py-4 sm:py-5 text-black text-base sm:text-lg font-semibold hover:bg-neutral-100 transition-all hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.3)] cursor-pointer"
           >
-            <span>{lang === 'ar' ? 'دخول الجلسة العلاجية (Enter Therapy Session)' : 'Enter Therapy Session'}</span>
+            <span>{lang === 'ar' ? 'احكي مع سكينة' : 'Enter Therapy Session'}</span>
             <ArrowRight className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${lang === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
           </button>
         </motion.div>

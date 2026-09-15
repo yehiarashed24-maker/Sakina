@@ -5,11 +5,12 @@ import jwt
 from datetime import datetime, timedelta
 
 from ..database import get_db
+from ..config import settings
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
-GOOGLE_CLIENT_ID = "581968496749-q1bms5247riskm0m11lasp0ujsee3tri.apps.googleusercontent.com"
-JWT_SECRET = "super-secret-jwt-key-sakina-2026"
+GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
+JWT_SECRET = settings.JWT_SECRET
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
 
@@ -22,6 +23,8 @@ class TokenResponse(BaseModel):
     user: dict = None
 
 def create_access_token(data: dict):
+    if not JWT_SECRET:
+        raise RuntimeError("JWT_SECRET is not configured")
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
     to_encode.update({"exp": expire})
@@ -35,7 +38,8 @@ def google_auth(request: GoogleLoginRequest, db: Database = Depends(get_db)):
         # Verify Google access token by fetching user info
         user_info_response = req.get(
             "https://www.googleapis.com/oauth2/v3/userinfo",
-            headers={"Authorization": f"Bearer {request.credential}"}
+            headers={"Authorization": f"Bearer {request.credential}"},
+            timeout=10,
         )
         
         if user_info_response.status_code != 200:
@@ -75,5 +79,9 @@ def google_auth(request: GoogleLoginRequest, db: Database = Depends(get_db)):
             }
         }
 
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Google Auth Error: {str(e)}")
+    except HTTPException:
+        raise
+    except req.RequestException as exc:
+        raise HTTPException(status_code=503, detail="Google authentication is temporarily unavailable") from exc
+    except (KeyError, ValueError) as exc:
+        raise HTTPException(status_code=401, detail="Invalid Google user profile") from exc

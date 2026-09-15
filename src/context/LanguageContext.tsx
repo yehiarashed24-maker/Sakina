@@ -20,7 +20,7 @@ export const translations = {
     // Hero
     heroTitle1: "Understand your mind",
     heroTitle2: "with Sakina",
-    heroSubtitle: "مساحة آمنة لفهم مشاعرك والتعبير عن أفكارك", // kept as requested or translate? Prompt said "Arabic subtitle" so I'll keep it arabic in EN or translate to EN? I'll translate to EN for EN mode.
+    heroSubtitle: "مساحة تحكي فيها براحتك وتفهم مشاعرك", // kept as requested or translate? Prompt said "Arabic subtitle" so I'll keep it arabic in EN or translate to EN? I'll translate to EN for EN mode.
     heroSubtitleEn: "A safe space to understand your feelings and express your thoughts",
     heroDesc: "An intelligent AI companion that listens, understands emotions, and helps you reflect using trusted psychological knowledge.",
     startConv: "Start Conversation",
@@ -94,66 +94,66 @@ export const translations = {
     // Hero
     heroTitle1: "افهم مشاعرك",
     heroTitle2: "مع سَكِينَة",
-    heroSubtitle: "مساحة آمنة لفهم مشاعرك والتعبير عن أفكارك",
-    heroSubtitleEn: "مساحة آمنة لفهم مشاعرك والتعبير عن أفكارك",
-    heroDesc: "رفيق ذكي يستمع إليك، يتفهم مشاعرك، ويساعدك على التأمل باستخدام معرفة نفسية موثوقة.",
+    heroSubtitle: "مساحة تحكي فيها براحتك وتفهم مشاعرك",
+    heroSubtitleEn: "مساحة تحكي فيها براحتك وتفهم مشاعرك",
+    heroDesc: "سكينة بتسمعك وبتساعدك تفهم مشاعرك، وبتستند لمصادر نفسية في ردودها.",
     startConv: "ابدأ المحادثة",
     exploreSakina: "استكشف سَكِينَة",
     
     // About
     aboutLabel: "عن سَكِينَة",
-    aboutTitle1: "حيث تلتقي التكنولوجيا",
-    aboutTitle2: "بالفهم العاطفي",
-    aboutDesc: "تجمع سَكِينَة بين الذكاء الاصطناعي والمعرفة النفسية لخلق محادثات داعمة وهادفة.",
+    aboutTitle1: "تكنولوجيا بتساعدك",
+    aboutTitle2: "تفهم مشاعرك",
+    aboutDesc: "سَكِينَة بتجمع بين الذكاء الاصطناعي والمعرفة النفسية عشان تسمعك وتساعدك تفكر في اللي حاسس بيه.",
     
     // Featured
-    howWorks: "كيف تعمل سَكِينَة",
-    ragDesc: "باستخدام تقنية RAG، تسترجع سَكِينَة معلومات نفسية موثوقة قبل توليد ردود داعمة بالذكاء الاصطناعي.",
+    howWorks: "سَكِينَة بتشتغل إزاي",
+    ragDesc: "سَكِينَة بتدور في المصادر النفسية قبل ما ترد، ولو الدليل مش كفاية بتقولك.",
     
     // Philosophy
     philTitle1: "التعاطف",
     philTitle2: "الذكاء الاصطناعي",
     emoUnder: "الفهم العاطفي",
-    emoDesc: "تتفهم سَكِينَة أفكارك ومشاعرك وسياق المحادثة لخلق تفاعلات ذات معنى.",
+    emoDesc: "سَكِينَة بتتابع كلامك واللي بتشاركه عن مشاعرك عشان ردها يبقى مرتبط بيك.",
     knowAi: "ذكاء اصطناعي مبني على المعرفة",
-    knowDesc: "تسترجع سَكِينَة المعلومات من مصادر الصحة النفسية الموثوقة قبل توليد الردود.",
+    knowDesc: "سَكِينَة بتراجع مصادر الصحة النفسية قبل ما تجاوبك.",
     
     // Services
-    whatSakinaDoes: "ماذا تقدم سَكِينَة",
+    whatSakinaDoes: "سَكِينَة بتقدملك إيه",
     featuresLabel: "المميزات",
     reflection: "تأمل",
     journaling: "مذكرات ذكية",
-    journalDesc: "عبر عن أفكارك واكتشف أنماطك العاطفية من خلال محادثات ذكية.",
+    journalDesc: "احكي اللي في بالك، وخد بالك من المشاعر اللي بتتكرر معاك.",
     support: "دعم",
     wellnessComp: "رفيق الصحة النفسية",
-    wellnessDesc: "مساحة ذكية وخاصة حيث يمكنك التحدث والتأمل وفهم نفسك بشكل أفضل.",
+    wellnessDesc: "مساحة ليك تحكي وتفكر فيها وتفهم نفسك أكتر.",
     
     // Chat
     online: "متصل",
-    typeMsg: "اكتب ما بداخلك...",
+    typeMsg: "احكي اللي في بالك...",
     home: "الرئيسية",
     recentChats: "محادثات سابقة",
-    moodTracker: "متتبع المزاج",
-    currentState: "الحالة الحالية",
+    moodTracker: "متابعة مشاعرك",
+    currentState: "إحساسك دلوقتي",
     stable: "مستقر",
     ragActive: "نظام RAG يعمل",
     
     // RAG Steps
-    step1: "تحليل مشاعر المستخدم...",
-    step2: "البحث في قاعدة المعرفة النفسية...",
-    step3: "استرجاع السياق المناسب...",
-    step4: "توليد رد داعم...",
+    step1: "براجع اللي شاركته...",
+    step2: "بدوّر في المصادر النفسية...",
+    step3: "براجع المصادر المناسبة...",
+    step4: "بجهز الرد...",
     
     // CTA Section
-    ctaTitle1: "هل أنت مستعد",
-    ctaTitle2: "لبدء جلستك؟",
-    ctaDesc: "جرب رفيقاً نفسياً خاصاً يعمل بالذكاء الاصطناعي، مُصمم خصيصاً لفهم ودعم صحتك النفسية بأمان وسرية.",
-    beginSession: "ابدأ الجلسة العلاجية",
+    ctaTitle1: "جاهز",
+    ctaTitle2: "نبدأ كلامنا؟",
+    ctaDesc: "جرّب تحكي مع سَكِينَة، مساعدتك بالذكاء الاصطناعي عشان تفكر في مشاعرك وتاخد خطوة تناسبك.",
+    beginSession: "ابدأ الكلام",
     
     // Footer
     privacy: "سياسة الخصوصية",
     terms: "شروط الخدمة",
-    contact: "اتصل بنا",
+    contact: "كلمنا",
     copyright: "© 2026 سَكِينَة للذكاء الاصطناعي. جميع الحقوق محفوظة.",
     tagline: "رفيقك النفسي بالذكاء الاصطناعي."
   }
@@ -162,11 +162,12 @@ export const translations = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Language>('en');
+  const [lang, setLang] = useState<Language>(() => localStorage.getItem('sakina_language') === 'ar' ? 'ar' : 'en');
 
   useEffect(() => {
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = lang;
+    document.documentElement.lang = lang === 'ar' ? 'ar-EG' : 'en';
+    localStorage.setItem('sakina_language', lang);
   }, [lang]);
 
   const t = (key: keyof typeof translations.en) => {

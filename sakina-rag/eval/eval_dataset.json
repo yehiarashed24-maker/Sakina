@@ -1,0 +1,142 @@
+[
+  {
+    "id": "eval-01",
+    "query": "ما هي الأعراض الشائعة للاكتئاب السريري؟",
+    "language": "ar",
+    "expected_document": "depression.pdf",
+    "topic": "Depression"
+  },
+  {
+    "id": "eval-02",
+    "query": "What are common signs and symptoms of depression?",
+    "language": "en",
+    "expected_document": "depression.pdf",
+    "topic": "Depression"
+  },
+  {
+    "id": "eval-03",
+    "query": "أعراض اضطراب فرط الحركة وتشتت الانتباه عند البالغين",
+    "language": "ar",
+    "expected_document": "adhd-in-adults-four-things-to-know.pdf",
+    "topic": "ADHD"
+  },
+  {
+    "id": "eval-04",
+    "query": "How is ADHD diagnosed and managed in adults?",
+    "language": "en",
+    "expected_document": "adhd-in-adults-four-things-to-know.pdf",
+    "topic": "ADHD"
+  },
+  {
+    "id": "eval-05",
+    "query": "ما هو اضطراب الوسواس القهري وكيف تظهر الأفكار الاقتحامية؟",
+    "language": "ar",
+    "expected_document": "obsessive-compulsive-disorder-508.pdf",
+    "topic": "OCD"
+  },
+  {
+    "id": "eval-06",
+    "query": "What are intrusive thoughts and compulsions in OCD?",
+    "language": "en",
+    "expected_document": "obsessive-compulsive-disorder-508.pdf",
+    "topic": "OCD"
+  },
+  {
+    "id": "eval-07",
+    "query": "ما هي العلامات التحذيرية المبكرة للانتحار وكيف يمكن المساعدة؟",
+    "language": "ar",
+    "expected_document": "warning-signs-of-suicide.pdf",
+    "topic": "Suicide Prevention"
+  },
+  {
+    "id": "eval-08",
+    "query": "What are the key warning signs of suicide risk?",
+    "language": "en",
+    "expected_document": "warning-signs-of-suicide.pdf",
+    "topic": "Suicide Prevention"
+  },
+  {
+    "id": "eval-09",
+    "query": "ما هو اضطراب ما بعد الصدمة وما هي أعراض الفلاش باك؟",
+    "language": "ar",
+    "expected_document": "post-traumatic-stress-disorder_1.pdf",
+    "topic": "PTSD"
+  },
+  {
+    "id": "eval-10",
+    "query": "Understanding PTSD intrusive memories and flashbacks",
+    "language": "en",
+    "expected_document": "post-traumatic-stress-disorder_1.pdf",
+    "topic": "PTSD"
+  },
+  {
+    "id": "eval-11",
+    "query": "كيف يظهر الاضطراب ثنائي القطب عند الأطفال والمراهقين؟",
+    "language": "ar",
+    "expected_document": "bipolar-disorder-in-children-and-teens.pdf",
+    "topic": "Bipolar Disorder"
+  },
+  {
+    "id": "eval-12",
+    "query": "Bipolar disorder mood episodes in children and teens",
+    "language": "en",
+    "expected_document": "bipolar-disorder-in-children-and-teens.pdf",
+    "topic": "Bipolar Disorder"
+  },
+  {
+    "id": "eval-13",
+    "query": "ما هو اكتئاب ما بعد الولادة واكتئاب الفترة المحيطة بالولادة؟",
+    "language": "ar",
+    "expected_document": "perinatal-depression.pdf",
+    "topic": "Perinatal Depression"
+  },
+  {
+    "id": "eval-14",
+    "query": "Symptoms and treatments for perinatal depression in new mothers",
+    "language": "en",
+    "expected_document": "perinatal-depression.pdf",
+    "topic": "Perinatal Depression"
+  },
+  {
+    "id": "eval-15",
+    "query": "ما هو الاضطراب العاطفي الموسمي وكآبة فصل الشتاء؟",
+    "language": "ar",
+    "expected_document": "seasonal_affective_disorder_more_than_the_winter_blues.pdf",
+    "topic": "Seasonal Affective Disorder"
+  },
+  {
+    "id": "eval-16",
+    "query": "Winter blues and Seasonal Affective Disorder treatment light therapy",
+    "language": "en",
+    "expected_document": "seasonal_affective_disorder_more_than_the_winter_blues.pdf",
+    "topic": "Seasonal Affective Disorder"
+  },
+  {
+    "id": "eval-17",
+    "query": "ما هو الذهان وكيف تظهر الهلاوس والأوهام؟",
+    "language": "ar",
+    "expected_document": "23-MH-8110-Understanding-Psychosis.pdf",
+    "topic": "Psychosis"
+  },
+  {
+    "id": "eval-18",
+    "query": "Understanding first episode psychosis hallucinations and delusions",
+    "language": "en",
+    "expected_document": "23-MH-8110-Understanding-Psychosis.pdf",
+    "topic": "Psychosis"
+  },
+  {
+    "id": "eval-19",
+    "query": "لماذا يصيب الاكتئاب النساء بنسب أعلى وما هي العوامل الهرمونية؟",
+    "language": "ar",
+    "expected_document": "depression-women_508.pdf",
+    "topic": "Depression in Women"
+  },
+  {
+    "id": "eval-20",
+    "query": "Risk factors and treatments for depression specifically in women",
+    "language": "en",
+    "expected_document": "depression-women_508.pdf",
+    "topic": "Depression in Women"
+  }
+]

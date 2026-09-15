@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, PhoneOff, Volume2, VolumeX, MessageSquare, ArrowRight, Send, Check, Hand, Globe, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Mic, MicOff, PhoneOff, Volume2, VolumeX, MessageSquare, ArrowRight, Send, Check, Hand, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { useVoiceSession } from '../../hooks/useVoiceSession';
@@ -11,7 +11,7 @@ interface SakinaTalkViewProps {
 }
 
 export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) {
-  const { lang, setLang } = useLanguage();
+  const { setLang } = useLanguage();
   const [manualText, setManualText] = useState('');
 
   const {
@@ -51,17 +51,17 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
   };
 
   return (
-    <div className="relative h-[100dvh] w-full overflow-hidden bg-black text-white p-2.5 sm:p-4 md:p-6 flex flex-col select-none">
+    <div dir={voiceLang === 'ar' ? 'rtl' : 'ltr'} className="relative min-h-[100dvh] w-full overflow-x-hidden bg-black text-white p-2.5 sm:p-4 md:p-6 flex flex-col select-none">
       {/* Subtle Background Radial Ambient Atmosphere */}
       <div className="absolute inset-0 pointer-events-none -z-10">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neutral-900/35 rounded-full blur-[130px]" />
       </div>
 
       {/* Main Viewport Frame with Large Rounded Corners */}
-      <main className="relative w-full h-full flex-1 rounded-[24px] sm:rounded-[36px] md:rounded-[44px] border border-white/10 bg-black/95 backdrop-blur-3xl flex flex-col justify-between p-5 sm:p-7 md:p-9 overflow-hidden shadow-2xl">
-        
+      <main className="relative w-full min-h-[calc(100dvh-3rem)] flex-1 rounded-[24px] sm:rounded-[36px] md:rounded-[44px] border border-white/10 bg-black/95 backdrop-blur-3xl flex flex-col gap-8 p-5 sm:p-7 md:p-9 overflow-hidden shadow-2xl">
+
         {/* ================= TOP NAVIGATION ================= */}
-        <header className="w-full flex items-center justify-between z-30 pb-3 border-b border-white/5 shrink-0">
+        <header className="w-full flex flex-wrap gap-4 items-center justify-between z-30 pb-3 border-b border-white/5 shrink-0">
           {/* Brand Logo / Mark */}
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-full border border-white/20 bg-white/5 flex items-center justify-center p-0.5">
@@ -75,7 +75,7 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
           </div>
 
           {/* Center/Right Nav Controls: Mode Switch, Voice Language, About, Online */}
-          <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
             {/* Direct Mode Switch: CHAT | TALK */}
             <div className="liquid-glass rounded-full p-1 flex items-center border border-white/10">
               <button
@@ -83,35 +83,33 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
                 className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-wider text-white/50 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <MessageSquare className="w-3 h-3" />
-                CHAT
+                {voiceLang === 'ar' ? 'شات' : 'CHAT'}
               </button>
               <button
                 className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-mono uppercase tracking-wider bg-white text-black font-semibold shadow-sm transition-all"
               >
-                TALK
+                {voiceLang === 'ar' ? 'نتكلم' : 'TALK'}
               </button>
             </div>
 
             {/* Dedicated Voice Language Switcher */}
             <div className="liquid-glass rounded-full p-0.5 flex items-center border border-cyan-500/30">
               <button
-                onClick={() => setVoiceLang('ar')}
-                className={`px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono transition-all cursor-pointer flex items-center gap-1 ${
-                  voiceLang === 'ar'
+                onClick={() => { setVoiceLang('ar'); setLang('ar'); }}
+                className={`px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono transition-all cursor-pointer flex items-center gap-1 ${voiceLang === 'ar'
                     ? 'bg-cyan-500/30 text-cyan-300 font-bold border border-cyan-400/40 shadow-[0_0_10px_rgba(34,211,238,0.3)]'
                     : 'text-white/50 hover:text-white'
-                }`}
+                  }`}
                 title="تحدث بالعربية"
               >
                 <span>عربي</span>
               </button>
               <button
-                onClick={() => setVoiceLang('en')}
-                className={`px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono transition-all cursor-pointer flex items-center gap-1 ${
-                  voiceLang === 'en'
+                onClick={() => { setVoiceLang('en'); setLang('en'); }}
+                className={`px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono transition-all cursor-pointer flex items-center gap-1 ${voiceLang === 'en'
                     ? 'bg-cyan-500/30 text-cyan-300 font-bold border border-cyan-400/40 shadow-[0_0_10px_rgba(34,211,238,0.3)]'
                     : 'text-white/50 hover:text-white'
-                }`}
+                  }`}
                 title="Speak in English"
               >
                 <span>EN</span>
@@ -123,14 +121,14 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
               to="/about"
               className="hidden md:inline-block text-[11px] sm:text-xs uppercase tracking-widest text-white/60 hover:text-white transition-colors"
             >
-              ABOUT
+              {voiceLang === 'ar' ? 'عن سكينة' : 'ABOUT'}
             </Link>
 
             {/* Online Status Indicator */}
             <div className="flex items-center gap-2 liquid-glass px-3 py-1 sm:py-1.5 rounded-full border border-white/10">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
               <span className="text-[9px] sm:text-[10px] font-mono font-semibold uppercase tracking-widest text-white/70">
-                ONLINE
+                {voiceLang === 'ar' ? 'جاهزة' : 'ONLINE'}
               </span>
             </div>
           </div>
@@ -145,7 +143,7 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
             </h3>
             <p className="text-[10px] sm:text-[11px] text-white/45 max-w-xs leading-relaxed font-sans mt-0.5">
               {voiceLang === 'ar'
-                ? 'مرافق ذكاء اصطناعي صوتي متقدم ومصمم للاستماع والتفهم والدعم النفسي.'
+                ? 'مساعدتك بالذكاء الاصطناعي، بتسمعك وبترد على كلامك.'
                 : 'An intelligent conversational companion designed to listen, understand and respond.'}
             </p>
           </div>
@@ -158,21 +156,21 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
           </div>
 
           {/* Right Metadata: What I Do */}
-          <div className="hidden md:flex flex-col items-end text-right">
+          <div className="hidden md:flex flex-col items-end text-end">
             <span className="text-[10px] sm:text-[11px] uppercase font-mono tracking-widest text-white/75 mb-1 font-semibold">
-              WHAT I DO
+              {voiceLang === 'ar' ? 'أقدر أساعدك إزاي' : 'WHAT I DO'}
             </span>
             <ul className="text-[10px] font-mono text-white/40 space-y-0.5">
-              <li>Real-time conversation</li>
-              <li>Natural voice interaction</li>
-              <li>Context-aware responses</li>
-              <li>Empathetic AI assistance</li>
+              <li>{voiceLang === 'ar' ? 'نتكلم سوا' : 'Real-time conversation'}</li>
+              <li>{voiceLang === 'ar' ? 'احكي بصوتك براحتك' : 'Natural voice interaction'}</li>
+              <li>{voiceLang === 'ar' ? 'ردود على حسب كلامك' : 'Context-aware responses'}</li>
+              <li>{voiceLang === 'ar' ? 'مساعدة بالذكاء الاصطناعي' : 'Empathetic AI assistance'}</li>
             </ul>
           </div>
         </section>
 
         {/* ================= CENTER HERO VISUAL (AI ROBOT) ================= */}
-        <section className="flex-1 flex flex-col items-center justify-center relative my-auto py-1 z-20 min-h-0">
+        <section className="flex flex-col items-center justify-center relative py-6 z-20 shrink-0 gap-4">
           <SakinaRobotEntity
             state={state}
             audioLevel={audioLevel}
@@ -195,7 +193,7 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
                   className="flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-400 hover:bg-cyan-300 text-black font-semibold text-xs shadow-[0_0_20px_rgba(34,211,238,0.5)] transition-all cursor-pointer"
                 >
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
-                  <span>{voiceLang === 'ar' ? 'خلصت كلام (إرسال الآن)' : 'Done Speaking (Send Now)'}</span>
+                  <span>{voiceLang === 'ar' ? 'خلصت كلامي، ابعت' : 'Done Speaking (Send Now)'}</span>
                 </motion.button>
               )}
 
@@ -210,32 +208,31 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
                   className="flex items-center gap-2 px-4 py-2 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-semibold text-xs shadow-[0_0_20px_rgba(251,191,36,0.5)] transition-all cursor-pointer"
                 >
                   <Hand className="w-3.5 h-3.5" />
-                  <span>{voiceLang === 'ar' ? 'مقاطعة / أريد التحدث الآن' : 'Interrupt & Speak'}</span>
+                  <span>{voiceLang === 'ar' ? 'استني، عايز أتكلم' : 'Interrupt & Speak'}</span>
                 </motion.button>
               )}
             </div>
           )}
 
           {/* Live Subtitle / Dialogue Console Card (User & AI Realtime Dialogue) */}
-          <div className="mt-2.5 max-w-xl w-full px-5 py-3.5 rounded-2xl sm:rounded-3xl bg-neutral-950/90 border border-white/15 backdrop-blur-2xl shadow-[0_15px_35px_rgba(0,0,0,0.8)] flex flex-col justify-center min-h-[90px] max-h-[145px] overflow-y-auto transition-all relative">
+          <div className="mt-2.5 max-w-xl w-full px-5 py-3.5 rounded-2xl sm:rounded-3xl bg-neutral-950/90 border border-white/15 backdrop-blur-2xl shadow-[0_15px_35px_rgba(0,0,0,0.8)] flex flex-col justify-center min-h-[90px] max-h-[240px] overflow-y-auto transition-all relative">
             {/* Ambient subtle state glow line */}
-            <div 
-              className={`absolute top-0 left-0 right-0 h-[2px] transition-all duration-500 ${
-                state === 'listening' ? 'bg-gradient-to-r from-transparent via-cyan-400 to-transparent' :
-                state === 'thinking' ? 'bg-gradient-to-r from-transparent via-indigo-400 to-transparent' :
-                state === 'speaking' ? 'bg-gradient-to-r from-transparent via-emerald-400 to-transparent' :
-                'bg-transparent'
-              }`} 
+            <div
+              className={`absolute top-0 left-0 right-0 h-[2px] transition-all duration-500 ${state === 'listening' ? 'bg-gradient-to-r from-transparent via-cyan-400 to-transparent' :
+                  state === 'thinking' ? 'bg-gradient-to-r from-transparent via-indigo-400 to-transparent' :
+                    state === 'speaking' ? 'bg-gradient-to-r from-transparent via-emerald-400 to-transparent' :
+                      'bg-transparent'
+                }`}
             />
 
             {/* When not active */}
             {!isActive ? (
-              <div 
+              <div
                 onClick={startSession}
                 className="flex flex-col items-center justify-center text-center cursor-pointer py-1 group"
               >
                 <p className="text-white/80 group-hover:text-white text-xs sm:text-sm font-sans transition-colors font-medium">
-                  {voiceLang === 'ar' ? 'المكالمة الصوتية جاهزة.. اضغط على الروبوت لبدء الحديث' : 'Voice session ready. Click the robot to begin.'}
+                  {voiceLang === 'ar' ? 'جاهزين نتكلم.. دوس على الروبوت ونبدأ' : 'Voice session ready. Click the robot to begin.'}
                 </p>
                 <span className="text-[10px] font-mono text-cyan-400/80 mt-0.5">
                   {voiceLang === 'ar' ? '🎙️ اضغط هنا للبدء' : '🎙️ Click here to start'}
@@ -249,7 +246,7 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
                     <div className="flex items-center justify-between pb-1 border-b border-white/5">
                       <span className="text-[10px] sm:text-[11px] font-mono tracking-wider text-cyan-400 flex items-center gap-1.5 font-semibold">
                         <Mic className="w-3 h-3 text-cyan-400 animate-pulse" />
-                        {voiceLang === 'ar' ? 'أنت تتحدث الآن:' : 'You are speaking:'}
+                        {voiceLang === 'ar' ? 'إنت بتتكلم:' : 'You are speaking:'}
                       </span>
                       <span className="text-[9px] font-mono text-cyan-300/60">
                         {voiceLang === 'ar' ? 'استماع نشط' : 'Listening...'}
@@ -268,7 +265,7 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
                         {voiceLang === 'ar' ? 'أنت سألت:' : 'You asked:'}
                       </span>
                       <span className="text-[9px] font-mono text-indigo-300/80 animate-pulse">
-                        {voiceLang === 'ar' ? 'سكينة تفكر في الرد...' : 'Thinking...'}
+                        {voiceLang === 'ar' ? 'سكينة بتجهز الرد...' : 'Thinking...'}
                       </span>
                     </div>
                     <p className="text-white/80 text-xs sm:text-sm font-sans italic leading-relaxed text-center sm:text-start" dir={voiceLang === 'ar' ? 'rtl' : 'ltr'}>
@@ -284,21 +281,21 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
                         {voiceLang === 'ar' ? 'سكينة (Sakina):' : 'Sakina:'}
                       </span>
                       <span className="text-[9px] font-mono text-white/40">
-                        {state === 'speaking' ? (voiceLang === 'ar' ? 'تتحدث الآن...' : 'Speaking now...') : (voiceLang === 'ar' ? 'أنا أستمع إليك..' : 'Listening to you..')}
+                        {state === 'speaking' ? (voiceLang === 'ar' ? 'بتتكلم دلوقتي...' : 'Speaking now...') : (voiceLang === 'ar' ? 'أنا سامعاك..' : 'Listening to you..')}
                       </span>
                     </div>
                     <p className="text-white/95 text-xs sm:text-sm md:text-[15px] font-sans leading-relaxed text-center sm:text-start" dir={/[\u0600-\u06FF]/.test(aiResponse) ? 'rtl' : 'ltr'}>
-                      {aiResponse.split(/📚|\*\*المراجع\*\*|\bالمراجع\b|\bReferences\b/i)[0].trim()}
+                      {aiResponse.split(/📚|\*\*المراجع\*\*|\bالمراجع\b|\bReferences\b/i)[0].replace(/\[\d+\]/g, '').trim()}
                     </p>
                   </div>
                 ) : (
                   /* 4. Active listening but nothing spoken yet */
                   <div className="flex flex-col items-center justify-center text-center py-1">
                     <p className="text-white/80 text-xs sm:text-sm font-sans font-medium">
-                      {voiceLang === 'ar' ? 'أنا أستمع إليك.. تفضل بالتحدث في أي وقت 🎙️' : 'I am listening.. feel free to speak anytime 🎙️'}
+                      {voiceLang === 'ar' ? 'أنا سامعاك.. احكي براحتك 🎙️' : 'I am listening.. feel free to speak anytime 🎙️'}
                     </p>
                     <span className="text-[10px] font-mono text-cyan-400/60 mt-0.5">
-                      {voiceLang === 'ar' ? 'تحدث بشكل طبيعي وسكينة سترد عليك فوراً' : 'Speak naturally, Sakina will reply automatically'}
+                      {voiceLang === 'ar' ? 'اتكلم براحتك وسكينة هترد عليك' : 'Speak naturally, Sakina will reply automatically'}
                     </span>
                   </div>
                 )}
@@ -310,9 +307,9 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
           {!isActive && (
             <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 max-w-md">
               {[
-                voiceLang === 'ar' ? 'أشعر بضغط نفسي اليوم' : 'I feel overwhelmed today',
-                voiceLang === 'ar' ? 'كيف يمكنك مساعدتي؟' : 'How can you help me relax?',
-                voiceLang === 'ar' ? 'أحتاج تمرين تنفس' : 'Guide me through breathing',
+                voiceLang === 'ar' ? 'حاسس بضغط النهارده' : 'I feel overwhelmed today',
+                voiceLang === 'ar' ? 'تقدري تساعديني إزاي؟' : 'How can you help me relax?',
+                voiceLang === 'ar' ? 'عايز تمرين تنفس' : 'Guide me through breathing',
               ].map((hint, i) => (
                 <button
                   key={i}
@@ -330,20 +327,20 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
         </section>
 
         {/* ================= BOTTOM BAR: HEADLINE & INTERACTION CONTROLS ================= */}
-        <footer className="w-full flex flex-col sm:flex-row items-end justify-between gap-4 pt-2 z-30 shrink-0">
+        <footer className="w-full flex flex-col sm:flex-row items-start sm:items-end justify-between gap-8 pt-6 z-30 shrink-0">
           {/* Bottom-Left Editorial Headline */}
-          <div className="flex flex-col text-left">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[44px] font-light uppercase tracking-tight text-white/90 leading-[1.08]">
-              I'M HERE <br />
-              TO{' '}
+          <div className="flex flex-col text-start">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[44px] font-light uppercase tracking-tight text-white/90 leading-[1.35]">
+              {voiceLang === 'ar' ? 'أنا هنا' : "I'M HERE"} <br />
+              {voiceLang === 'ar' ? 'عشان' : 'TO'}{' '}
               <span className="font-mono tracking-widest text-lg sm:text-2xl md:text-3xl text-white px-2 py-0.5 rounded bg-white/10 border border-white/20">
-                LISTEN
+                {voiceLang === 'ar' ? 'أسمعك' : 'LISTEN'}
               </span>{' '}
               <br />
-              UNDERSTAND <br />
-              AND{' '}
+              {voiceLang === 'ar' ? 'وأفهمك' : 'UNDERSTAND'} <br />
+              {voiceLang === 'ar' ? 'و' : 'AND'}{' '}
               <span className="font-mono tracking-widest text-lg sm:text-2xl md:text-3xl text-white px-2 py-0.5 rounded bg-white/10 border border-white/20">
-                RESPOND
+                {voiceLang === 'ar' ? 'أرد عليك' : 'RESPOND'}
               </span>
             </h2>
             <p className="text-[9px] font-mono text-white/30 uppercase tracking-[0.2em] mt-1.5">
@@ -363,7 +360,7 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
               >
                 <Mic className="w-4 h-4 text-black" />
                 <span className="tracking-wider uppercase font-mono">
-                  {voiceLang === 'ar' ? 'تحدث مع سكينة' : 'TALK TO SAKINA'}
+                  {voiceLang === 'ar' ? 'اتكلم مع سكينة' : 'TALK TO SAKINA'}
                 </span>
                 <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
               </motion.button>
@@ -375,7 +372,7 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
                   <input
                     type="text"
                     placeholder={voiceLang === 'ar' ? 'أو اكتب هنا لتنطق سكينة...' : 'Or type text here...'}
-                    className="flex-1 bg-transparent border-none outline-none text-white text-xs px-1 placeholder:text-white/40 font-sans"
+                    className="min-w-0 flex-1 bg-transparent border-none outline-none text-white text-xs px-1 placeholder:text-white/40 font-sans"
                     value={manualText}
                     onChange={(e) => setManualText(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleManualSend()}
@@ -423,11 +420,10 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
                   <button
                     onClick={toggleMute}
                     aria-label={isMuted ? 'Unmute microphone' : 'Mute microphone'}
-                    className={`p-2.5 rounded-full transition-all cursor-pointer ${
-                      isMuted
+                    className={`p-2.5 rounded-full transition-all cursor-pointer ${isMuted
                         ? 'bg-red-500/20 text-red-400 border border-red-500/40'
                         : 'bg-white/10 hover:bg-white/20 text-white border border-white/10'
-                    }`}
+                      }`}
                   >
                     {isMuted ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
                   </button>
@@ -436,11 +432,10 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
                   <button
                     onClick={toggleSpeaker}
                     aria-label={isSpeakerMuted ? 'Unmute speaker' : 'Mute speaker'}
-                    className={`p-2.5 rounded-full transition-all cursor-pointer ${
-                      isSpeakerMuted
+                    className={`p-2.5 rounded-full transition-all cursor-pointer ${isSpeakerMuted
                         ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
                         : 'bg-white/10 hover:bg-white/20 text-white border border-white/10'
-                    }`}
+                      }`}
                   >
                     {isSpeakerMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                   </button>
@@ -454,7 +449,7 @@ export default function SakinaTalkView({ onSwitchToChat }: SakinaTalkViewProps) 
                     className="p-2.5 px-4 rounded-full bg-red-600 hover:bg-red-500 text-white font-mono text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_20px_rgba(220,38,38,0.7)] transition-all cursor-pointer"
                   >
                     <PhoneOff className="w-3.5 h-3.5" />
-                    <span>END</span>
+                    <span>{voiceLang === 'ar' ? 'إنهاء' : 'END'}</span>
                   </motion.button>
                 </div>
               </div>

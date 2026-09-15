@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Globe, ArrowRight, Mail, MessageSquare, Mic, Sparkles } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import BackgroundVideo from './BackgroundVideo';
@@ -10,6 +10,18 @@ export default function HeroSection() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('sakina_token'));
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(event.target as Node)) {
+        setIsAccountMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const storedUser = localStorage.getItem('sakina_user');
   const user = storedUser ? JSON.parse(storedUser) : null;
@@ -66,17 +78,17 @@ export default function HeroSection() {
 
       {/* Navbar */}
       <nav className="relative z-20 px-6 py-6">
-        <div className="liquid-glass rounded-full max-w-5xl mx-auto px-6 py-3 flex justify-between items-center">
+        <div className="bg-black/20 backdrop-blur-xl border border-white/10 rounded-full max-w-5xl mx-auto px-6 py-3 flex justify-between items-center">
           <div className="flex items-center">
-            <img src="/sakina-logo.png" alt="Sakina AI" className="w-8 h-8 rounded-full object-cover mr-2 border border-white/20" />
+            <img src="/sakina-logo.png" alt="Sakina AI" className="w-8 h-8 rounded-full object-cover me-2 border border-white/20" />
             <span className="text-white font-semibold text-lg">Sakina AI</span>
 
-            <div className="hidden md:flex items-center gap-8 ml-8">
-              <button 
+            <div className="hidden md:flex items-center gap-8 ms-8">
+              <button
                 onClick={() => handleEnterTherapySession('/chat')}
                 className="text-white/80 hover:text-white text-sm font-medium transition-colors cursor-pointer"
               >
-                {lang === 'ar' ? 'الجلسة العلاجية' : 'Therapy Session'}
+                {lang === 'ar' ? 'مساحة للكلام' : 'Therapy Session'}
               </button>
               <Link to="/pricing" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('pricing')}</Link>
               <Link to="/about" className="text-white/80 hover:text-white text-sm font-medium transition-colors">{t('about')}</Link>
@@ -92,10 +104,10 @@ export default function HeroSection() {
               {lang === 'en' ? 'عربي' : 'EN'}
             </button>
             {isLoggedIn ? (
-              <div className="flex items-center gap-4 ml-4">
-                <button 
-                  onClick={() => handleEnterTherapySession('/chat')}
-                  className="flex items-center gap-2 liquid-glass rounded-full pl-2 pr-4 py-1.5 border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:bg-white/10 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              <div className="relative ms-4" ref={accountMenuRef}>
+                <button
+                  onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
+                  className="flex items-center gap-2 liquid-glass rounded-full ps-2 pe-4 py-1.5 border border-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)] hover:bg-white/10 transition-all cursor-pointer"
                 >
                   {user?.picture ? (
                     <img src={user.picture} alt="Profile" className="w-8 h-8 rounded-full border border-white/20 object-cover" />
@@ -106,26 +118,51 @@ export default function HeroSection() {
                   )}
                   <div className="flex flex-col text-left">
                     <span className="text-white text-[13px] font-semibold tracking-wide">{lang === 'ar' ? 'حسابي' : 'My Account'}</span>
-                    <span className="text-emerald-400 text-[9px] uppercase font-bold tracking-widest">{lang === 'ar' ? 'باقة فري' : 'Free Plan'}</span>
                   </div>
                 </button>
-                <button
-                  onClick={() => {
-                    localStorage.removeItem('sakina_token');
-                    localStorage.removeItem('sakina_user');
-                    localStorage.removeItem('sakina_active_id_v3');
-                    setIsLoggedIn(false);
-                    window.location.reload();
-                  }}
-                  className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-4 py-2 text-white/60 hover:text-white text-xs font-medium transition-all cursor-pointer"
-                >
-                  {lang === 'ar' ? 'تسجيل الخروج' : 'Sign Out'}
-                </button>
+
+                {isAccountMenuOpen && (
+                  <div className={`absolute top-full mt-2 w-64 liquid-glass rounded-2xl border border-white/10 shadow-2xl p-4 z-50 ${lang === 'ar' ? 'left-0' : 'right-0'}`}>
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+                      {user?.picture ? (
+                        <img src={user.picture} alt="Profile" className="w-10 h-10 rounded-full border border-white/20 object-cover" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-sm font-bold shadow-inner">
+                          {user?.name?.charAt(0) || 'U'}
+                        </div>
+                      )}
+                      <div className="flex flex-col overflow-hidden">
+                        <span className="text-white font-semibold truncate">{user?.name || 'User'}</span>
+                        <span className="text-white/60 text-xs truncate">{user?.email || ''}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2 mb-4">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-white/80">{lang === 'ar' ? 'نوع الباقة' : 'Plan Type'}</span>
+                        <span className="text-emerald-400 font-bold bg-emerald-400/10 px-2 py-0.5 rounded uppercase text-xs">{lang === 'ar' ? 'فري' : 'Free'}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem('sakina_token');
+                        localStorage.removeItem('sakina_user');
+                        localStorage.removeItem('sakina_active_id_v3');
+                        setIsLoggedIn(false);
+                        window.location.reload();
+                      }}
+                      className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl px-4 py-2 text-sm font-medium transition-all cursor-pointer"
+                    >
+                      {lang === 'ar' ? 'تسجيل الخروج' : 'Sign Out'}
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <button
                 onClick={() => handleGoogleLogin()}
-                className="liquid-glass rounded-full px-6 py-2 text-white text-sm font-medium hover:bg-white/5 transition-colors flex items-center gap-2 ml-4 cursor-pointer"
+                className="liquid-glass rounded-full px-6 py-2 text-white text-sm font-medium hover:bg-white/5 transition-colors flex items-center gap-2 ms-4 cursor-pointer"
               >
                 <svg viewBox="0 0 24 24" className="w-4 h-4" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -161,7 +198,7 @@ export default function HeroSection() {
             onClick={() => handleEnterTherapySession('/chat')}
             className="group relative inline-flex items-center gap-3 bg-white rounded-full px-8 sm:px-10 py-4 text-black text-base sm:text-lg font-semibold hover:bg-neutral-100 transition-all hover:scale-105 active:scale-95 shadow-[0_0_35px_rgba(255,255,255,0.3)] cursor-pointer"
           >
-            <span>{lang === 'ar' ? 'دخول الجلسة العلاجية (Enter Therapy Session)' : 'Enter Therapy Session'}</span>
+            <span>{lang === 'ar' ? 'احكي مع سكينة' : 'Enter Therapy Session'}</span>
             <ArrowRight className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${lang === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
           </button>
         </div>

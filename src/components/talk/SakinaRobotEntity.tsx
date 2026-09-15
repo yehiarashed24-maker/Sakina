@@ -52,15 +52,14 @@ export default function SakinaRobotEntity({
       {/* Background Atmospheric Depth & Soft Spotlight */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none -z-10">
         <div
-          className={`w-72 h-72 sm:w-96 sm:h-96 md:w-[460px] md:h-[460px] rounded-full blur-[90px] transition-all duration-1000 ${
-            state === 'listening'
+          className={`w-72 h-72 sm:w-96 sm:h-96 md:w-[460px] md:h-[460px] rounded-full blur-[90px] transition-all duration-1000 ${state === 'listening'
               ? 'bg-cyan-500/10'
               : state === 'thinking'
-              ? 'bg-indigo-500/10'
-              : state === 'speaking'
-              ? 'bg-white/10'
-              : 'bg-white/[0.03]'
-          }`}
+                ? 'bg-indigo-500/10'
+                : state === 'speaking'
+                  ? 'bg-white/10'
+                  : 'bg-white/[0.03]'
+            }`}
         />
       </div>
 
@@ -95,15 +94,14 @@ export default function SakinaRobotEntity({
               }}
             >
               <div
-                className={`w-[2px] rounded-full transition-all duration-75 ${
-                  state === 'listening'
+                className={`w-[2px] rounded-full transition-all duration-75 ${state === 'listening'
                     ? 'bg-gradient-to-t from-cyan-400 to-white shadow-[0_0_8px_rgba(34,211,238,0.8)]'
                     : state === 'speaking'
-                    ? 'bg-gradient-to-t from-white to-white/40 shadow-[0_0_8px_rgba(255,255,255,0.8)]'
-                    : state === 'thinking'
-                    ? 'bg-indigo-400/50'
-                    : 'bg-white/15'
-                }`}
+                      ? 'bg-gradient-to-t from-white to-white/40 shadow-[0_0_8px_rgba(255,255,255,0.8)]'
+                      : state === 'thinking'
+                        ? 'bg-indigo-400/50'
+                        : 'bg-white/15'
+                  }`}
                 style={{ height: `${bar.height}px` }}
               />
             </div>
@@ -121,10 +119,10 @@ export default function SakinaRobotEntity({
               state === 'idle'
                 ? [1, 1.018, 1]
                 : state === 'listening'
-                ? [1, 1.03, 1]
-                : state === 'speaking'
-                ? [1, 1.04, 1]
-                : 1,
+                  ? [1, 1.03, 1]
+                  : state === 'speaking'
+                    ? [1, 1.04, 1]
+                    : 1,
             rotate: state === 'idle' ? [-0.6, 0.6, -0.6] : [0, 0, 0],
           }}
           transition={{
@@ -138,15 +136,14 @@ export default function SakinaRobotEntity({
           <div className="relative w-full h-full flex items-center justify-center">
             {/* Glowing Core Sphere */}
             <div
-              className={`absolute inset-2 rounded-full transition-all duration-700 ${
-                state === 'listening'
+              className={`absolute inset-2 rounded-full transition-all duration-700 ${state === 'listening'
                   ? 'bg-gradient-to-b from-neutral-900 via-cyan-950/40 to-black border border-cyan-500/40 shadow-[0_0_50px_rgba(6,182,212,0.25)]'
                   : state === 'thinking'
-                  ? 'bg-gradient-to-b from-neutral-900 via-indigo-950/40 to-black border border-indigo-500/40 shadow-[0_0_50px_rgba(99,102,241,0.25)]'
-                  : state === 'speaking'
-                  ? 'bg-gradient-to-b from-neutral-900 via-neutral-800 to-black border border-white/40 shadow-[0_0_60px_rgba(255,255,255,0.2)]'
-                  : 'bg-gradient-to-b from-neutral-900 via-neutral-950 to-black border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.8)]'
-              }`}
+                    ? 'bg-gradient-to-b from-neutral-900 via-indigo-950/40 to-black border border-indigo-500/40 shadow-[0_0_50px_rgba(99,102,241,0.25)]'
+                    : state === 'speaking'
+                      ? 'bg-gradient-to-b from-neutral-900 via-neutral-800 to-black border border-white/40 shadow-[0_0_60px_rgba(255,255,255,0.2)]'
+                      : 'bg-gradient-to-b from-neutral-900 via-neutral-950 to-black border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.8)]'
+                }`}
             />
 
             {/* Futuristic Cybernetic Visor / Head Sculpture SVG */}
@@ -186,10 +183,10 @@ export default function SakinaRobotEntity({
                   state === 'listening'
                     ? 'rgba(34,211,238,0.7)'
                     : state === 'speaking'
-                    ? 'rgba(255,255,255,0.8)'
-                    : state === 'thinking'
-                    ? 'rgba(165,180,252,0.7)'
-                    : 'rgba(255,255,255,0.25)'
+                      ? 'rgba(255,255,255,0.8)'
+                      : state === 'thinking'
+                        ? 'rgba(165,180,252,0.7)'
+                        : 'rgba(255,255,255,0.25)'
                 }
                 strokeWidth="1.5"
               />
@@ -219,8 +216,8 @@ export default function SakinaRobotEntity({
                       state === 'listening'
                         ? '#22d3ee'
                         : state === 'speaking'
-                        ? '#ffffff'
-                        : '#ffffff'
+                          ? '#ffffff'
+                          : '#ffffff'
                     }
                     opacity={state === 'idle' ? 0.6 : 1}
                     filter="url(#glowFilter)"
@@ -234,8 +231,8 @@ export default function SakinaRobotEntity({
                       state === 'listening'
                         ? '#22d3ee'
                         : state === 'speaking'
-                        ? '#ffffff'
-                        : '#ffffff'
+                          ? '#ffffff'
+                          : '#ffffff'
                     }
                     opacity={state === 'idle' ? 0.6 : 1}
                     filter="url(#glowFilter)"
@@ -312,15 +309,14 @@ export default function SakinaRobotEntity({
       <div className="mt-4 flex flex-col items-center gap-2 z-10">
         <div className="flex items-center gap-2.5 px-4 py-1 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl">
           <div
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              state === 'listening'
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${state === 'listening'
                 ? 'bg-cyan-400 animate-ping shadow-[0_0_10px_rgba(34,211,238,1)]'
                 : state === 'thinking'
-                ? 'bg-indigo-400 animate-spin shadow-[0_0_10px_rgba(129,140,248,1)]'
-                : state === 'speaking'
-                ? 'bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,1)]'
-                : 'bg-white/40'
-            }`}
+                  ? 'bg-indigo-400 animate-spin shadow-[0_0_10px_rgba(129,140,248,1)]'
+                  : state === 'speaking'
+                    ? 'bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,1)]'
+                    : 'bg-white/40'
+              }`}
           />
           <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-white/70">
             {statusText}

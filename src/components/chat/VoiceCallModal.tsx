@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, PhoneOff, Volume2, Sparkles, Send } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useChatContext } from '../../context/ChatContext';
-import { sendChatMessage } from '../../services/aiService';
 
 interface VoiceCallModalProps {
   isOpen: boolean;
@@ -14,7 +13,7 @@ type CallStatus = 'listening' | 'thinking' | 'speaking' | 'idle';
 
 export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps) {
   const { lang } = useLanguage();
-  const { messages, sendMessage } = useChatContext();
+  const { sendMessage } = useChatContext();
 
   const [status, setStatus] = useState<CallStatus>('idle');
   const [transcript, setTranscript] = useState('');
@@ -26,6 +25,7 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
   const recognitionRef = useRef<any>(null);
   const isCallActiveRef = useRef(false);
   const capturedTextRef = useRef('');
+  const restartListeningRef = useRef<() => void>(() => {});
 
   // Clean Speech Output
   const speakText = useCallback((text: string, onEnded: () => void) => {
@@ -83,17 +83,8 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
 
     try {
       // sendMessage handles optimistic UI, API call, and saving to backend
-      await sendMessage(userText, lang, sendChatMessage);
-      
-      // Get the last AI message from context (it was just added)
-      // Since context update might be slightly delayed, we can just let the context update UI.
-      // But we need the AI text to speak it. 
-      // Actually, sendMessage doesn't return the ai reply text.
-      // We can intercept the last message, or we can just fetch it again? No, we shouldn't fetch again.
-      // Let's modify sendMessage to return the aiReply string in ChatContext later, or we can do a local call.
-      // For now, let's do local call just for voice.
-      const history = [...messages, { id: Date.now(), isAi: false, textEn: userText, textAr: userText }];
-      const aiReply = await sendChatMessage(history, lang);
+      const aiReply = await sendMessage(userText, lang);
+      if (!aiReply) throw new Error('No AI response received');
       setAiResponseText(aiReply);
       setDebugLog(lang === 'ar' ? 'تم استلام الرد، جاري النطق بالتحدث...' : 'Response received, speaking out loud...');
 
@@ -101,7 +92,7 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
       setStatus('speaking');
       speakText(aiReply, () => {
         if (isCallActiveRef.current && !isMuted) {
-          restartListening();
+          restartListeningRef.current();
         } else {
           setStatus('idle');
           setDebugLog(lang === 'ar' ? 'في انتظار حديثك القادم...' : 'Waiting for next speech...');
@@ -111,10 +102,10 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
       console.error(err);
       setDebugLog(lang === 'ar' ? 'حدث خطأ في الاتصال، جاري المحاولة ثانية' : 'Connection error, retrying');
       if (isCallActiveRef.current && !isMuted) {
-        restartListening();
+        restartListeningRef.current();
       }
     }
-  }, [lang, messages, speakText, isMuted, sendMessage]);
+  }, [lang, speakText, isMuted, sendMessage]);
 
   // Restart Listening Loop
   const restartListening = useCallback(() => {
@@ -130,7 +121,7 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
 
     try {
       if (recognitionRef.current) {
-        try { recognitionRef.current.stop(); } catch (e) {}
+        try { recognitionRef.current.stop(); } catch {}
       }
 
       const recognition = new SpeechRecognition();
@@ -190,6 +181,10 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
     }
   }, [lang, isMuted, processUserSpeech]);
 
+  useEffect(() => {
+    restartListeningRef.current = restartListening;
+  }, [restartListening]);
+
   // Open/Close Call lifecycle
   useEffect(() => {
     if (isOpen) {
@@ -198,7 +193,7 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
     } else {
       isCallActiveRef.current = false;
       if (recognitionRef.current) {
-        try { recognitionRef.current.stop(); } catch (e) {}
+        try { recognitionRef.current.stop(); } catch {}
       }
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -212,7 +207,7 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
     return () => {
       isCallActiveRef.current = false;
       if (recognitionRef.current) {
-        try { recognitionRef.current.stop(); } catch (e) {}
+        try { recognitionRef.current.stop(); } catch {}
       }
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -365,7 +360,7 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
           <div className="mt-6 flex flex-wrap gap-2 justify-center max-w-md">
             {[
               lang === 'ar' ? 'أشعر بالقلق اليوم' : 'I feel anxious today',
-              lang === 'ar' ? 'كيف يمكنك مساعدتي؟' : 'How can you help me?',
+              lang === 'ar' ? 'تقدري تساعديني إزاي؟' : 'How can you help me?',
               lang === 'ar' ? 'أحتاج نصيحة سريعة' : 'I need quick advice'
             ].map((preset, idx) => (
               <button
@@ -408,7 +403,7 @@ export default function VoiceCallModal({ isOpen, onClose }: VoiceCallModalProps)
                   restartListening();
                 } else {
                   setIsMuted(true);
-                  if (recognitionRef.current) try { recognitionRef.current.stop(); } catch (e) {}
+                  if (recognitionRef.current) try { recognitionRef.current.stop(); } catch {}
                   setStatus('idle');
                 }
               }}

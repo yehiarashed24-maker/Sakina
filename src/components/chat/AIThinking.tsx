@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-export default function AIThinking({ activeStep }: { activeStep?: number }) {
+export default function AIThinking({ activeStep: _activeStep }: { activeStep?: number }) {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
@@ -26,4 +26,3 @@ export default function AIThinking({ activeStep }: { activeStep?: number }) {
     </motion.div>
   );
 }
-

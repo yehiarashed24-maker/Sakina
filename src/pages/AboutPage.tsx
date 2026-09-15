@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import Hls from 'hls.js';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -37,19 +37,19 @@ const translations = {
     visionDesc: "We envision a world where emotional support is just a tap away. Breaking stigmas and barriers, Sakina is your companion in the journey toward inner peace."
   },
   ar: {
-    back: "العودة للرئيسية",
+    back: "ارجع للرئيسية",
     type: "النوع",
     platform: "المنصة",
     mission: "المهمة",
     technology: "التكنولوجيا",
-    aboutUs: "من نحن",
+    aboutUs: "إحنا مين",
     sakinaAI: "سكينة",
     mentalWellness: "الصحة النفسية",
     ai: "الذكاء الاصطناعي",
     safeSpace1: "سكينة",
     safeSpace2: "مساحتك الآمنة",
     challenge: "التحدي",
-    challengeDesc: "في عالمنا السريع اليوم، يواجه الكثيرون صراعات صامتة مع القلق والتوتر، ويفتقرون إلى الدعم النفسي الذي يسهل الوصول إليه.",
+    challengeDesc: "وسط زحمة اليوم، ناس كتير بتواجه قلق وضغط ومش بتلاقي بسهولة حد يسمعها.",
     stat1Val: "٧٠٪",
     stat1Label: "يعانون من التوتر اليومي",
     stat2Val: "٦٠٪",
@@ -57,14 +57,14 @@ const translations = {
     stat3Val: "٤٠٪",
     stat3Label: "يشعرون بالعزلة أو التهميش",
     solution: "حل سكينة",
-    solutionTitle: "توفر سكينة رفيقاً يعتمد على الذكاء الاصطناعي، متعاطفاً وخاصاً ومتوفراً دائماً لتعزيز صحتك النفسية.",
-    solutionDesc: "من خلال الجمع بين نماذج الذكاء الاصطناعي المتقدمة والفهم النفسي العميق، نقدم ملاذاً آمناً للتعبير عن الذات.",
+    solutionTitle: "سكينة مساعدتك بالذكاء الاصطناعي، موجودة عشان تسمعك وتساعدك تفكر في مشاعرك.",
+    solutionDesc: "بنستخدم الذكاء الاصطناعي ومصادر نفسية عشان تلاقي مساحة تعبّر فيها عن نفسك.",
     secure: "آمن وذكي",
-    secureTitle: "مدعوم بأحدث تقنيات RAG ومؤمن بتشفير MongoDB Atlas على مستوى الشركات.",
-    secureDesc: "محادثاتك خاصة تماماً. يضمن نظامنا المتقدم أن سكينة تتذكر سياق حديثك لتوفير دعم نفسي مستمر ومخصص.",
+    secureTitle: "سكينة بتدور في المصادر المتاحة قبل ما تجاوبك.",
+    secureDesc: "تقدر تتحكم في ذاكرة سكينة من صفحة رحلتك، وتختار تفتكر سياق كلامك أو توقف الذاكرة.",
     vision: "رؤيتنا",
-    visionTitle: "دعم نفسي في متناول الجميع، في أي مكان.",
-    visionDesc: "نتخيل عالماً يكون فيه الدعم العاطفي متاحاً بضغطة زر. سكينة هي رفيقك في رحلتك نحو السلام الداخلي، لكسر الحواجز النفسية."
+    visionTitle: "مساحة للكلام تكون أقرب لكل الناس، في أي مكان.",
+    visionDesc: "نفسنا كل واحد يلاقي مساحة يتكلم فيها بسهولة. سكينة معاك عشان تفهم نفسك وتاخد وقتك."
   }
 };
 
@@ -77,15 +77,15 @@ function useActivation(isActive: boolean) {
 }
 
 const Logo = () => (
-  <svg width="116" height="36" viewBox="0 0 116 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="130" height="36" viewBox="0 0 130 36" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M10 18C10 22.4183 13.5817 26 18 26C22.4183 26 26 22.4183 26 18C26 13.5817 22.4183 10 18 10C13.5817 10 10 13.5817 10 18Z" fill="white" fillOpacity="0.2"/>
     <path d="M18 14C15.7909 14 14 15.7909 14 18C14 20.2091 15.7909 22 18 22C20.2091 22 22 20.2091 22 18C22 15.7909 20.2091 14 18 14Z" fill="white"/>
-    <text x="36" y="22" fill="white" fontFamily="sans-serif" fontSize="16" fontWeight="bold">Sakina AI</text>
+    <text x="36" y="23" fill="white" fontFamily="sans-serif" fontSize="16" fontWeight="bold" direction="ltr" style={{ direction: 'ltr', unicodeBidi: 'bidi-override' }}>Sakina AI</text>
   </svg>
 );
 
 const SlideUpLine = ({ children, delay = 0, duration = 0.7 }: any) => (
-  <span className="overflow-hidden inline-block align-bottom">
+  <span className="inline-block" style={{ clipPath: "inset(0 0 -20% 0)" }}>
     <motion.span
       initial={{ y: "100%" }}
       animate={{ y: "0%" }}
@@ -103,7 +103,7 @@ const WordByWordReveal = ({ text, baseDelay = 0.25, stagger = 0.035, duration = 
   return (
     <div className={className} style={style}>
       {words.map((word: string, i: number) => (
-        <span key={i} className={`overflow-hidden inline-block ${marginClass} align-bottom`}>
+        <span key={i} className={`inline-block ${marginClass}`} style={{ clipPath: "inset(0 0 -20% 0)" }}>
           <motion.span
             initial={{ y: "100%" }}
             animate={{ y: "0%" }}
@@ -157,7 +157,7 @@ const HlsVideo = ({ src, style, className }: any) => {
   return <video ref={videoRef} className={className} style={style} autoPlay muted loop playsInline />;
 };
 
-const Slide1 = ({ isActive, t, lang }: any) => {
+const Slide1 = ({ isActive, t }: any) => {
   const count = useActivation(isActive);
   return (
     <motion.div
@@ -320,12 +320,14 @@ const Slide5 = ({ isActive, t, lang }: any) => {
         </BlurReveal>
         <div className="px-[5%] mt-6"><div className="bg-white/15 h-px w-full" /></div>
         <div className="flex-1" />
-        <div className="max-w-[55%] px-[5%] pb-[5%]">
-          <BlurReveal delay={0.15} className="text-[#80838e] mb-4" style={{ fontSize: 'clamp(12px, 1.2vw, 26px)' }}>{t.vision}</BlurReveal>
-          <WordByWordReveal text={t.visionTitle} lang={lang} className="text-white leading-[1.04]" style={{ fontSize: 'clamp(20px, 4vw, 80px)' }} />
-          <BlurReveal delay={0.6} className="text-[#80838e] max-w-[680px] mt-6" style={{ fontSize: 'clamp(12px, 1.1vw, 26px)' }}>
-            {t.visionDesc}
-          </BlurReveal>
+        <div className="w-full px-[5%] pb-[15%] md:pb-[12%]">
+          <div className="max-w-[95%] md:max-w-[85%]">
+            <BlurReveal delay={0.15} className="text-[#80838e] mb-4" style={{ fontSize: 'clamp(12px, 1.2vw, 26px)' }}>{t.vision}</BlurReveal>
+            <WordByWordReveal text={t.visionTitle} lang={lang} className="text-white leading-[1.04]" style={{ fontSize: 'clamp(20px, 4vw, 80px)' }} />
+            <BlurReveal delay={0.6} className="text-[#80838e] max-w-[800px] mt-6" style={{ fontSize: 'clamp(12px, 1.1vw, 26px)' }}>
+              {t.visionDesc}
+            </BlurReveal>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -459,7 +461,7 @@ export default function AboutPage() {
         </div>
 
         <span className="text-[10px] text-white/30 tracking-wider hidden sm:block">
-          {lang === 'ar' ? 'مرر بالفأرة أو استخدم الأسهم للتنقل' : 'Scroll or use arrows to explore'}
+          {lang === 'ar' ? 'حرّك الماوس أو استخدم الأسهم عشان تتنقل' : 'Scroll or use arrows to explore'}
         </span>
       </div>
     </div>

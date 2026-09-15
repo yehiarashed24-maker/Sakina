@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Mic, MessageSquare, PhoneCall, Sparkles } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Send, Mic, MessageSquare, PhoneCall, Sparkles, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MessageBubble from './MessageBubble';
 import AIThinking from './AIThinking';
 import { useLanguage } from '../../context/LanguageContext';
 import { useChatContext } from '../../context/ChatContext';
-import { sendChatMessage } from '../../services/aiService';
 
 interface ChatWindowProps {
   onSwitchToTalk?: () => void;
@@ -15,7 +15,33 @@ export default function ChatWindow({ onSwitchToTalk }: ChatWindowProps) {
   const { lang } = useLanguage();
   const { messages, sendMessage, isTyping } = useChatContext();
   const [input, setInput] = useState('');
+  const navigate = useNavigate();
+  const [, setLogoClicks] = useState(0);
   const endRef = useRef<HTMLDivElement>(null);
+
+  // Secret Developer Shortcut: Cmd+Shift+D or Ctrl+Shift+D opens RAG Inspector
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        navigate('/rag-inspector');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
+
+  // Secret Developer 5-click easter egg on logo
+  const handleLogoClick = () => {
+    setLogoClicks(prev => {
+      const next = prev + 1;
+      if (next >= 5) {
+        navigate('/rag-inspector');
+        return 0;
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     const t = setTimeout(() => endRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
@@ -25,7 +51,7 @@ export default function ChatWindow({ onSwitchToTalk }: ChatWindowProps) {
   const handleSend = async (text: string) => {
     if (!text.trim() || isTyping) return;
     setInput('');
-    try { await sendMessage(text, lang, sendChatMessage); }
+    try { await sendMessage(text, lang); }
     catch (e) { console.error(e); }
   };
 
@@ -36,13 +62,19 @@ export default function ChatWindow({ onSwitchToTalk }: ChatWindowProps) {
         {/* Header with High-Visibility Voice Call Action */}
         <header className="px-5 md:px-8 py-4 md:py-5 border-b border-white/5 flex items-center justify-between z-20 bg-black/20">
           <div className="flex items-center gap-3">
-            <img src="/sakina-logo.png" alt="Sakina AI" className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border border-white/20" />
+            <img
+              src="/sakina-logo.png"
+              alt="Sakina AI"
+              onClick={handleLogoClick}
+              title="Sakina AI"
+              className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border border-white/20 cursor-pointer select-none"
+            />
             <div className="flex flex-col">
               <span className={`text-xl md:text-2xl lg:text-3xl tracking-tight text-white ${lang === 'en' ? 'font-instrument italic' : 'font-semibold'}`}>
                 Sakina AI <span className="text-xs md:text-sm font-sans text-white/50 ml-1.5 not-italic">سَكِينَة</span>
               </span>
               <span className="text-[9px] md:text-[11px] text-white/40 uppercase tracking-widest font-mono">
-                {lang === 'ar' ? 'جلسة العلاج والدعم النفسي' : 'AI Therapy & Wellness Session'}
+                {lang === 'ar' ? 'مساحة للكلام ومتابعة مشاعرك' : 'AI Therapy & Wellness Session'}
               </span>
             </div>
           </div>
@@ -90,6 +122,16 @@ export default function ChatWindow({ onSwitchToTalk }: ChatWindowProps) {
               </div>
             )}
 
+            {/* SAKINA Journey Intelligence */}
+            <Link
+              to="/journey"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full liquid-glass border border-pink-500/30 text-pink-300 hover:text-white hover:bg-pink-500/20 text-xs font-mono transition-all cursor-pointer shadow-[0_0_12px_rgba(236,72,153,0.15)]"
+              title="Open SAKINA Journey Intelligence"
+            >
+              <Heart className="w-3.5 h-3.5 text-pink-400" />
+              <span className="hidden sm:inline">{lang === 'ar' ? 'رحلة سكينة' : 'Journey'}</span>
+            </Link>
+
             {/* Online Status */}
             <div className="hidden md:flex items-center gap-2 liquid-glass px-3.5 py-2 rounded-full border border-white/5">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
@@ -107,7 +149,7 @@ export default function ChatWindow({ onSwitchToTalk }: ChatWindowProps) {
               <Sparkles className="w-3.5 h-3.5 text-cyan-300 animate-pulse" />
               <span>
                 {lang === 'ar'
-                  ? 'هل تفضل التحدث بالصوت مباشرة؟ سكينة تستمع إليك وترد بصوتها فوراً'
+                  ? 'تحب تحكي بصوتك؟ سكينة هتسمعك وترد عليك'
                   : 'Prefer speaking out loud? Talk to Sakina in real-time cinematic voice call'}
               </span>
             </div>
@@ -115,7 +157,7 @@ export default function ChatWindow({ onSwitchToTalk }: ChatWindowProps) {
               onClick={onSwitchToTalk}
               className="text-xs font-mono font-medium text-cyan-300 hover:text-white underline underline-offset-4 cursor-pointer flex items-center gap-1"
             >
-              <span>{lang === 'ar' ? 'انتقل للمكالمة الآن' : 'Switch to Talk'}</span>
+              <span>{lang === 'ar' ? 'افتح المكالمة' : 'Switch to Talk'}</span>
               <span>&rarr;</span>
             </button>
           </div>
@@ -125,8 +167,15 @@ export default function ChatWindow({ onSwitchToTalk }: ChatWindowProps) {
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10 flex flex-col gap-6 md:gap-8 hide-scrollbar z-20">
           <AnimatePresence mode="popLayout">
             {messages.map((msg) => (
-              <MessageBubble key={msg.id} isAi={msg.isAi}
-                text={lang === 'ar' ? msg.textAr : msg.textEn} lang={lang} />
+              <MessageBubble
+                key={msg.id}
+                isAi={msg.isAi}
+                text={lang === 'ar' ? msg.textAr : msg.textEn}
+                lang={lang}
+                sources={msg.sources}
+                retrieval={msg.retrieval}
+                safety={msg.safety}
+              />
             ))}
             {isTyping && (
               <div className="w-full flex justify-start"><AIThinking /></div>
@@ -140,7 +189,7 @@ export default function ChatWindow({ onSwitchToTalk }: ChatWindowProps) {
           <div className="liquid-glass bg-white/[0.03] rounded-[28px] md:rounded-[32px] p-2 md:p-3 px-4 md:px-6 flex items-center gap-3 border border-white/10 shadow-2xl backdrop-blur-3xl focus-within:border-white/20 transition-all">
             <input
               type="text"
-              placeholder={lang === 'en' ? "Share what's on your mind..." : "اكتب ما بداخلك..."}
+              placeholder={lang === 'en' ? "Share what's on your mind..." : "احكي اللي في بالك..."}
               className="flex-1 bg-transparent border-none outline-none text-white text-sm md:text-base py-2.5 md:py-3 px-2 placeholder:text-white/30"
               value={input}
               onChange={(e) => setInput(e.target.value)}

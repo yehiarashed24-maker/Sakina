@@ -1,10 +1,15 @@
 from pymongo import MongoClient
 import certifi
+from app.config import settings
 
-MONGO_URI = "mongodb+srv://yehiarashed2004_db_user:PYQzkc2mUnCLesMW@cluster0.nykfh5s.mongodb.net/?appName=Cluster0"
-
-client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
-db = client.sakina_db
+client = None
+db = None
 
 def get_db():
+    global client, db
+    if db is None:
+        if not settings.MONGO_URI.strip():
+            raise RuntimeError("MONGO_URI is not configured")
+        client = MongoClient(settings.MONGO_URI, tlsCAFile=certifi.where())
+        db = client.sakina_db
     return db

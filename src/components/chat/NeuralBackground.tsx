@@ -17,7 +17,7 @@ export default function NeuralBackground() {
     canvas.width = width;
     canvas.height = height;
 
-    const PARTICLE_COUNT = 120;
+    const PARTICLE_COUNT = 60;
 
     interface Particle {
       x: number;
@@ -37,7 +37,8 @@ export default function NeuralBackground() {
       alpha: Math.random() * 0.6 + 0.2,
     }));
 
-    const CONNECTION_DISTANCE = 120;
+    const CONNECTION_DISTANCE = 100;
+    const CONNECTION_DISTANCE_SQ = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
 
     function draw() {
       ctx!.clearRect(0, 0, width, height);
@@ -47,9 +48,10 @@ export default function NeuralBackground() {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const distSq = dx * dx + dy * dy;
 
-          if (dist < CONNECTION_DISTANCE) {
+          if (distSq < CONNECTION_DISTANCE_SQ) {
+            const dist = Math.sqrt(distSq);
             const alpha = (1 - dist / CONNECTION_DISTANCE) * 0.15;
             ctx!.beginPath();
             ctx!.strokeStyle = `rgba(139, 92, 246, ${alpha})`;

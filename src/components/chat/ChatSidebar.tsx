@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Mic } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Mic, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import MoodTracker from './MoodTracker';
 import { useLanguage } from '../../context/LanguageContext';
@@ -51,16 +51,39 @@ export default function ChatSidebar({ onSwitchToTalk }: ChatSidebarProps) {
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="font-semibold text-xs text-white">
-                    {lang === 'ar' ? 'المكالمة الصوتية (Talk)' : 'Live Voice Call'}
+                    {lang === 'ar' ? 'مكالمة صوتية' : 'Live Voice Call'}
                   </span>
                   <span className="text-[10px] text-cyan-300/80 font-mono">
-                    {lang === 'ar' ? 'تحدث مع سكينة مباشرة' : 'Speak to Sakina'}
+                    {lang === 'ar' ? 'اتكلم مع سكينة' : 'Speak to Sakina'}
                   </span>
                 </div>
               </div>
               <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
             </motion.button>
           )}
+
+          <Link to="/journey" className="w-full">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              className="flex items-center justify-between w-full bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 hover:from-neutral-800 hover:to-neutral-700 border border-pink-500/30 hover:border-pink-500/50 text-white rounded-2xl px-4 py-3 transition-all shadow-[0_0_20px_rgba(236,72,153,0.12)] cursor-pointer group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-pink-500/20 border border-pink-400/40 flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-pink-300 animate-pulse" />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="font-semibold text-xs text-white">
+                    {lang === 'ar' ? 'رحلتك مع سكينة' : 'Sakina Journey'}
+                  </span>
+                  <span className="text-[10px] text-pink-300/80 font-mono">
+                    {lang === 'ar' ? 'تمارين من كلامك ومتابعة مشاعرك' : 'Celestial Sanctuary & Trend'}
+                  </span>
+                </div>
+              </div>
+              <div className="w-2 h-2 rounded-full bg-pink-400 shadow-[0_0_8px_rgba(236,72,153,0.8)]" />
+            </motion.div>
+          </Link>
         </div>
       </div>
 

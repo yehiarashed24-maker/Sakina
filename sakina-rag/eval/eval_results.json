@@ -1,0 +1,306 @@
+{
+  "evaluation_name": "SAKINA Clinical RAG Benchmark",
+  "timestamp": "2026-09-03T19:33:02.252748Z",
+  "dataset_size": 20,
+  "embedding_model": "paraphrase-multilingual-MiniLM-L12-v2",
+  "vector_database": "Lightweight NumPy Store (267 chunks, 11 clinical PDFs)",
+  "reranking_enabled": false,
+  "reranking_status": "Not Enabled (Candidate Architecture Prepared)",
+  "metrics": {
+    "mrr": 0.85,
+    "recall_at_3": 1.0,
+    "precision_at_3": 0.6833,
+    "recall_at_5": 1.0,
+    "precision_at_5": 0.63,
+    "recall_at_10": 1.0,
+    "precision_at_10": 0.555,
+    "avg_retrieval_latency_ms": 101.07
+  },
+  "metric_definitions": {
+    "Recall@K": "Proportion of queries where the verified ground-truth clinical document appeared in Top-K candidates.",
+    "Precision@K": "Fraction of Top-K retrieved chunks that belong to the relevant document domain.",
+    "MRR": "Mean Reciprocal Rank: average of 1/rank for the first relevant document retrieved."
+  },
+  "per_query_results": [
+    {
+      "id": "eval-01",
+      "query": "ما هي الأعراض الشائعة للاكتئاب السريري؟",
+      "language": "ar",
+      "expected_document": "depression.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "depression.pdf",
+        "depression.pdf",
+        "depression.pdf"
+      ],
+      "latency_ms": 1068.14
+    },
+    {
+      "id": "eval-02",
+      "query": "What are common signs and symptoms of depression?",
+      "language": "en",
+      "expected_document": "depression.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "depression.pdf",
+        "depression.pdf",
+        "depression.pdf"
+      ],
+      "latency_ms": 32.42
+    },
+    {
+      "id": "eval-03",
+      "query": "أعراض اضطراب فرط الحركة وتشتت الانتباه عند البالغين",
+      "language": "ar",
+      "expected_document": "adhd-in-adults-four-things-to-know.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "adhd-in-adults-four-things-to-know.pdf",
+        "depression.pdf",
+        "adhd-in-adults-four-things-to-know.pdf"
+      ],
+      "latency_ms": 27.85
+    },
+    {
+      "id": "eval-04",
+      "query": "How is ADHD diagnosed and managed in adults?",
+      "language": "en",
+      "expected_document": "adhd-in-adults-four-things-to-know.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "adhd-in-adults-four-things-to-know.pdf",
+        "adhd-in-adults-four-things-to-know.pdf",
+        "adhd-in-adults-four-things-to-know.pdf"
+      ],
+      "latency_ms": 13.54
+    },
+    {
+      "id": "eval-05",
+      "query": "ما هو اضطراب الوسواس القهري وكيف تظهر الأفكار الاقتحامية؟",
+      "language": "ar",
+      "expected_document": "obsessive-compulsive-disorder-508.pdf",
+      "first_rank": 2,
+      "reciprocal_rank": 0.5,
+      "top_3_retrieved": [
+        "mental_health_rag_kb.pdf",
+        "obsessive-compulsive-disorder-508.pdf",
+        "23-MH-8110-Understanding-Psychosis.pdf"
+      ],
+      "latency_ms": 19.77
+    },
+    {
+      "id": "eval-06",
+      "query": "What are intrusive thoughts and compulsions in OCD?",
+      "language": "en",
+      "expected_document": "obsessive-compulsive-disorder-508.pdf",
+      "first_rank": 2,
+      "reciprocal_rank": 0.5,
+      "top_3_retrieved": [
+        "mental_health_rag_kb.pdf",
+        "obsessive-compulsive-disorder-508.pdf",
+        "obsessive-compulsive-disorder-508.pdf"
+      ],
+      "latency_ms": 21.12
+    },
+    {
+      "id": "eval-07",
+      "query": "ما هي العلامات التحذيرية المبكرة للانتحار وكيف يمكن المساعدة؟",
+      "language": "ar",
+      "expected_document": "warning-signs-of-suicide.pdf",
+      "first_rank": 2,
+      "reciprocal_rank": 0.5,
+      "top_3_retrieved": [
+        "frequently-asked-questions-about-suicide.pdf",
+        "warning-signs-of-suicide.pdf",
+        "frequently-asked-questions-about-suicide.pdf"
+      ],
+      "latency_ms": 20.51
+    },
+    {
+      "id": "eval-08",
+      "query": "What are the key warning signs of suicide risk?",
+      "language": "en",
+      "expected_document": "warning-signs-of-suicide.pdf",
+      "first_rank": 2,
+      "reciprocal_rank": 0.5,
+      "top_3_retrieved": [
+        "frequently-asked-questions-about-suicide.pdf",
+        "warning-signs-of-suicide.pdf",
+        "frequently-asked-questions-about-suicide.pdf"
+      ],
+      "latency_ms": 232.95
+    },
+    {
+      "id": "eval-09",
+      "query": "ما هو اضطراب ما بعد الصدمة وما هي أعراض الفلاش باك؟",
+      "language": "ar",
+      "expected_document": "post-traumatic-stress-disorder_1.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "post-traumatic-stress-disorder_1.pdf",
+        "mental_health_rag_kb.pdf",
+        "post-traumatic-stress-disorder_1.pdf"
+      ],
+      "latency_ms": 13.67
+    },
+    {
+      "id": "eval-10",
+      "query": "Understanding PTSD intrusive memories and flashbacks",
+      "language": "en",
+      "expected_document": "post-traumatic-stress-disorder_1.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "post-traumatic-stress-disorder_1.pdf",
+        "post-traumatic-stress-disorder_1.pdf",
+        "post-traumatic-stress-disorder_1.pdf"
+      ],
+      "latency_ms": 224.93
+    },
+    {
+      "id": "eval-11",
+      "query": "كيف يظهر الاضطراب ثنائي القطب عند الأطفال والمراهقين؟",
+      "language": "ar",
+      "expected_document": "bipolar-disorder-in-children-and-teens.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "bipolar-disorder-in-children-and-teens.pdf",
+        "bipolar-disorder-in-children-and-teens.pdf",
+        "depression.pdf"
+      ],
+      "latency_ms": 14.66
+    },
+    {
+      "id": "eval-12",
+      "query": "Bipolar disorder mood episodes in children and teens",
+      "language": "en",
+      "expected_document": "bipolar-disorder-in-children-and-teens.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "bipolar-disorder-in-children-and-teens.pdf",
+        "bipolar-disorder-in-children-and-teens.pdf",
+        "bipolar-disorder-in-children-and-teens.pdf"
+      ],
+      "latency_ms": 12.8
+    },
+    {
+      "id": "eval-13",
+      "query": "ما هو اكتئاب ما بعد الولادة واكتئاب الفترة المحيطة بالولادة؟",
+      "language": "ar",
+      "expected_document": "perinatal-depression.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "perinatal-depression.pdf",
+        "depression-women_508.pdf",
+        "perinatal-depression.pdf"
+      ],
+      "latency_ms": 20.76
+    },
+    {
+      "id": "eval-14",
+      "query": "Symptoms and treatments for perinatal depression in new mothers",
+      "language": "en",
+      "expected_document": "perinatal-depression.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "perinatal-depression.pdf",
+        "perinatal-depression.pdf",
+        "depression-women_508.pdf"
+      ],
+      "latency_ms": 132.69
+    },
+    {
+      "id": "eval-15",
+      "query": "ما هو الاضطراب العاطفي الموسمي وكآبة فصل الشتاء؟",
+      "language": "ar",
+      "expected_document": "seasonal_affective_disorder_more_than_the_winter_blues.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "seasonal_affective_disorder_more_than_the_winter_blues.pdf",
+        "post-traumatic-stress-disorder_1.pdf",
+        "depression.pdf"
+      ],
+      "latency_ms": 17.02
+    },
+    {
+      "id": "eval-16",
+      "query": "Winter blues and Seasonal Affective Disorder treatment light therapy",
+      "language": "en",
+      "expected_document": "seasonal_affective_disorder_more_than_the_winter_blues.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "seasonal_affective_disorder_more_than_the_winter_blues.pdf",
+        "obsessive-compulsive-disorder-508.pdf",
+        "depression-women_508.pdf"
+      ],
+      "latency_ms": 24.24
+    },
+    {
+      "id": "eval-17",
+      "query": "ما هو الذهان وكيف تظهر الهلاوس والأوهام؟",
+      "language": "ar",
+      "expected_document": "23-MH-8110-Understanding-Psychosis.pdf",
+      "first_rank": 2,
+      "reciprocal_rank": 0.5,
+      "top_3_retrieved": [
+        "mental_health_rag_kb.pdf",
+        "23-MH-8110-Understanding-Psychosis.pdf",
+        "23-MH-8110-Understanding-Psychosis.pdf"
+      ],
+      "latency_ms": 15.13
+    },
+    {
+      "id": "eval-18",
+      "query": "Understanding first episode psychosis hallucinations and delusions",
+      "language": "en",
+      "expected_document": "23-MH-8110-Understanding-Psychosis.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "23-MH-8110-Understanding-Psychosis.pdf",
+        "23-MH-8110-Understanding-Psychosis.pdf",
+        "23-MH-8110-Understanding-Psychosis.pdf"
+      ],
+      "latency_ms": 15.36
+    },
+    {
+      "id": "eval-19",
+      "query": "لماذا يصيب الاكتئاب النساء بنسب أعلى وما هي العوامل الهرمونية؟",
+      "language": "ar",
+      "expected_document": "depression-women_508.pdf",
+      "first_rank": 2,
+      "reciprocal_rank": 0.5,
+      "top_3_retrieved": [
+        "depression.pdf",
+        "depression-women_508.pdf",
+        "depression-women_508.pdf"
+      ],
+      "latency_ms": 73.74
+    },
+    {
+      "id": "eval-20",
+      "query": "Risk factors and treatments for depression specifically in women",
+      "language": "en",
+      "expected_document": "depression-women_508.pdf",
+      "first_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_3_retrieved": [
+        "depression-women_508.pdf",
+        "depression-women_508.pdf",
+        "depression.pdf"
+      ],
+      "latency_ms": 20.13
+    }
+  ]
+}

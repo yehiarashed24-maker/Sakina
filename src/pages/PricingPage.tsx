@@ -57,19 +57,19 @@ const demoPlansEn: PricingPlan[] = [
 
 const demoPlansAr: PricingPlan[] = [
   {
-    name: "الباقة المجانية",
+    name: "الباقة الأساسية (ببلاش)",
     price: "0",
     yearlyPrice: "0",
     period: "شهر",
     features: [
-      "تسجيل دخول آمن بجوجل",
-      "رسائل نصية غير محدودة",
-      "تتبع أساسي للحالة المزاجية",
-      "تشفير كامل للبيانات",
-      "وقت استجابة قياسي",
+      "دخول آمن بحساب جوجل",
+      "شات براحتك من غير حدود",
+      "تسجيل وتتبع لمزاجك",
+      "تشفير كامل وحماية لبياناتك",
+      "سرعة رد عادية",
     ],
-    description: "مثالية للاستخدام اليومي والفضفضة السريعة.",
-    buttonText: "ابدأ مجاناً",
+    description: "حلوة للفضفضة والكلام اليومي.",
+    buttonText: "ابدأ ببلاش",
     href: "/chat",
   },
   {
@@ -78,42 +78,42 @@ const demoPlansAr: PricingPlan[] = [
     yearlyPrice: "12",
     period: "شهر",
     features: [
-      "كل مميزات الباقة المجانية",
-      "ميزة التحدث الصوتي المباشر",
-      "تحليلات نفسية متقدمة",
-      "أولوية قصوى في الاستجابة",
-      "دخول مبكر للميزات الجديدة",
+      "كل اللي في الباقة الأساسية",
+      "اتكلم مع سكينة بصوتك",
+      "متابعة وتحليل لمشاعرك مع الوقت",
+      "أولوية وسرعة في الرد",
+      "جرّب المميزات الجديدة قبل أي حد",
     ],
-    description: "مثالية لدعم نفسي أعمق وأكثر تفاعلية.",
-    buttonText: "ترقية لنسخة برو",
+    description: "لو عايز تتفاعل وتتكلم مع سكينة أكتر.",
+    buttonText: "خليك برو",
     href: "/chat",
     isPopular: true,
   },
   {
-    name: "أدوات المعالجين",
+    name: "للدكاترة والمعالجين",
     price: "99",
     yearlyPrice: "79",
     period: "شهر",
     features: [
-      "لوحة تحكم لمتابعة المرضى",
-      "قاعدة بيانات RAG مخصصة",
-      "تصدير ملخصات الجلسات",
-      "دعم فني على مدار الساعة",
+      "لوحة تحكم لمتابعة حالات مرضاك",
+      "قاعدة بيانات طبية مخصصة",
+      "تصدير ملخصات للجلسات",
+      "دعم فني طول الوقت",
     ],
-    description: "للمعالجين النفسيين والعيادات المتخصصة.",
-    buttonText: "تواصل معنا",
+    description: "للمتخصصين والعيادات النفسية.",
+    buttonText: "كلمنا",
     href: "#",
   },
 ];
 
 export default function PricingPage() {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
 
   const translationsAr = {
     monthly: "شهري",
     annual: "سنوي",
     save: "(وفر ٢٠٪)",
-    mostPopular: "الأكثر شيوعاً",
+    mostPopular: "الأكثر اختيارًا",
     billedMonthly: "تدفع شهرياً",
     billedAnnually: "تدفع سنوياً",
   };
@@ -134,13 +134,13 @@ export default function PricingPage() {
         className="absolute top-8 left-8 z-50 text-white/50 hover:text-white transition-colors flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 text-sm font-medium"
       >
         <ArrowLeft className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} /> 
-        {lang === 'ar' ? 'العودة للرئيسية' : 'Back to Home'}
+        {lang === 'ar' ? 'ارجع للرئيسية' : 'Back to Home'}
       </Link>
 
       <PricingSection
         plans={lang === 'ar' ? demoPlansAr : demoPlansEn}
-        title={lang === 'ar' ? "خطط وأسعار بسيطة" : "Simple, Transparent Pricing"}
-        description={lang === 'ar' ? "اختر الباقة المناسبة لك. الخصوصية والأمان متوفران في كل الباقات." : "Choose the plan that's right for you. All plans include our core privacy features."}
+        title={lang === 'ar' ? "باقات وأسعار واضحة" : "Simple, Transparent Pricing"}
+        description={lang === 'ar' ? "اختار الباقة اللي تريحك وتناسب احتياجك." : "Choose the plan that's right for you. All plans include our core privacy features."}
         translations={lang === 'ar' ? translationsAr : translationsEn}
       />
     </div>

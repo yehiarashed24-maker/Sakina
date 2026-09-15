@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGoogleLogin } from '@react-oauth/google';
-import { Lock, ArrowLeft, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
+import { Lock, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import NeuralBackground from './chat/NeuralBackground';
 import ChatSidebar from './chat/ChatSidebar';
@@ -123,7 +123,7 @@ export default function ChatPage({ initialMode = 'chat' }: ChatPageProps) {
 
           {/* Heading */}
           <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-3">
-            {lang === 'ar' ? 'دخول الجلسة العلاجية' : 'Enter Therapy Session'}
+            {lang === 'ar' ? 'دخول مساحة للكلام' : 'Enter Therapy Session'}
           </h2>
 
           {/* Subtitle */}

@@ -1,10 +1,20 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { sendChatMessageFull } from '../services/aiService';
+import type {
+  EvidenceSource,
+  RetrievalMetadata,
+  SafetyMetadata
+} from '../services/aiService';
 
 export interface ChatMessage {
   id: string | number;
   isAi: boolean;
   textEn: string;
   textAr: string;
+  sources?: EvidenceSource[];
+  retrieval?: RetrievalMetadata;
+  safety?: SafetyMetadata;
+  citedRanks?: number[];
 }
 
 export interface MoodState {
@@ -34,7 +44,7 @@ interface ChatContextType {
   startNewConversation: () => Promise<void>;
   switchConversation: (id: string) => void;
   deleteConversation: (id: string) => Promise<void>;
-  sendMessage: (text: string, lang: 'en' | 'ar', sendApiCall: (history: ChatMessage[], lang: string) => Promise<string>) => Promise<void>;
+  sendMessage: (text: string, lang: 'en' | 'ar') => Promise<string | null>;
   isTyping: boolean;
   isLoading: boolean;
 }
@@ -45,12 +55,37 @@ const zeroMood: MoodState = { calm: 0, anxious: 0, stressed: 0, happy: 0, domina
 function calculateMoodFromMessages(msgs: ChatMessage[]): MoodState {
     const userMsgs = msgs.filter(m => !m.isAi);
     if (userMsgs.length === 0) return zeroMood;
-    const fullText = msgs.map(m => m.textEn + " " + m.textAr).join(" ").toLowerCase();
-    
-    const anxietyKeywords = ['anxious', 'anxiety', 'worry', 'worried', 'fear', 'scared', 'panic', 'قلق', 'خائف', 'خايف', 'رعب', 'توتر'];
-    const stressKeywords = ['stress', 'stressed', 'overwhelm', 'overwhelmed', 'tired', 'pressure', 'ضغط', 'تعب', 'إرهاق', 'مجهد'];
-    const happyKeywords = ['happy', 'joy', 'great', 'hope', 'wonderful', 'smile', 'سعيد', 'فرح', 'أمل', 'ممتاز', 'بهجة'];
-    const calmKeywords = ['calm', 'peace', 'relax', 'breathing', 'safe', 'rest', 'هدوء', 'سكينة', 'اطمئنان', 'راحة', 'مستقر'];
+    // Only analyze the user's actual messages, not the AI assistant replies
+    const fullText = userMsgs.map(m => (m.textAr || "") + " " + (m.textEn || "")).join(" ").toLowerCase();
+
+    const sadKeywords = [
+      'sad', 'depress', 'depression', 'depressed', 'crying', 'cry', 'hopeless', 'lonely', 'empty', 'grief',
+      'حزن', 'حزين', 'حزينة', 'اكتئاب', 'مكتئب', 'مكتئبة', 'مخنوق', 'مخنوقة', 'يأس', 'يائس', 'بكي', 'بعيط',
+      'وحيد', 'وحدة', 'فراغ', 'محبط', 'إحباط', 'موجوع', 'قلبي واجعني'
+    ];
+
+    const anxietyKeywords = [
+      'anxious', 'anxiety', 'worry', 'worried', 'fear', 'scared', 'panic', 'phobia', 'nervous',
+      'قلق', 'قلقان', 'قلقانة', 'خائف', 'خايف', 'خايفة', 'بخاف', 'خوف', 'رعب', 'مرعوب', 'هلع', 'بانيك',
+      'توتر', 'متوتر', 'متوترة', 'رهاب', 'ارتعاش'
+    ];
+
+    const stressKeywords = [
+      'stress', 'stressed', 'overwhelm', 'overwhelmed', 'tired', 'pressure', 'exhausted', 'burnout',
+      'ضغط', 'مضغوط', 'مضغوطة', 'تعب', 'تعبان', 'تعبانة', 'إرهاق', 'مرهق', 'مرهقة', 'مجهد', 'مشاكل',
+      'مستنزف', 'هموت من التعب', 'حمل ثقيل'
+    ];
+
+    const happyKeywords = [
+      'happy', 'joy', 'great', 'hope', 'wonderful', 'smile', 'grateful', 'blessed', 'excited',
+      'سعيد', 'سعيدة', 'فرح', 'فرحان', 'فرحانة', 'مبسوط', 'مبسوطة', 'أمل', 'متفائل', 'ممتاز', 'بهجة',
+      'الحمد لله رايق', 'بخير', 'الحمد لله'
+    ];
+
+    const calmKeywords = [
+      'calm', 'peace', 'relax', 'relaxed', 'breathing', 'safe', 'rest', 'stable',
+      'هدوء', 'هادئ', 'هادية', 'سكينة', 'اطمئنان', 'مطمئن', 'راحة', 'مرتاح', 'مرتاحة', 'مستقر', 'روقان'
+    ];
 
     const countMatches = (words: string[]) => {
       let count = 0;
@@ -62,29 +97,41 @@ function calculateMoodFromMessages(msgs: ChatMessage[]): MoodState {
       return count;
     };
 
+    const dCount = countMatches(sadKeywords);
     const aCount = countMatches(anxietyKeywords);
     const sCount = countMatches(stressKeywords);
     const hCount = countMatches(happyKeywords);
     const cCount = countMatches(calmKeywords);
-    const totalMatches = aCount + sCount + hCount + cCount;
+    const totalMatches = dCount + aCount + sCount + hCount + cCount;
 
-    let calmVal = 50, anxiousVal = 20, stressedVal = 20, happyVal = 30;
+    let calmVal = 20, anxiousVal = 20, stressedVal = 20, happyVal = 20, sadVal = 20;
     if (totalMatches > 0) {
-      calmVal = Math.min(95, Math.max(10, Math.round(20 + (cCount / totalMatches) * 75)));
+      sadVal = Math.min(95, Math.max(10, Math.round(15 + (dCount / totalMatches) * 80)));
       anxiousVal = Math.min(95, Math.max(10, Math.round(15 + (aCount / totalMatches) * 80)));
-      stressedVal = Math.min(95, Math.max(10, Math.round(10 + (sCount / totalMatches) * 85)));
-      happyVal = Math.min(95, Math.max(10, Math.round(15 + (hCount / totalMatches) * 75)));
+      stressedVal = Math.min(95, Math.max(10, Math.round(15 + (sCount / totalMatches) * 80)));
+      happyVal = Math.min(95, Math.max(10, Math.round(15 + (hCount / totalMatches) * 80)));
+      calmVal = Math.min(95, Math.max(10, Math.round(15 + (cCount / totalMatches) * 80)));
     } else {
-      calmVal = 60; anxiousVal = 25; stressedVal = 20; happyVal = 40;
+      // If user just started chatting without strong emotional keywords yet
+      calmVal = 40; anxiousVal = 20; stressedVal = 20; happyVal = 30; sadVal = 20;
     }
 
     const scores = [
-      { name: 'Calm', val: calmVal }, { name: 'Anxious', val: anxiousVal },
-      { name: 'Stressed', val: stressedVal }, { name: 'Happy', val: happyVal }
+      { name: 'Depressed', nameAr: 'حزن واكتئاب', val: sadVal },
+      { name: 'Anxious', nameAr: 'قلق وخوف', val: anxiousVal },
+      { name: 'Stressed', nameAr: 'توتر وضغط', val: stressedVal },
+      { name: 'Happy', nameAr: 'سعادة وأمل', val: happyVal },
+      { name: 'Calm', nameAr: 'هدوء وسكينة', val: calmVal }
     ];
     scores.sort((a, b) => b.val - a.val);
 
-    return { calm: calmVal, anxious: anxiousVal, stressed: stressedVal, happy: happyVal, dominant: scores[0].name };
+    return {
+      calm: calmVal,
+      anxious: anxiousVal,
+      stressed: stressedVal,
+      happy: happyVal,
+      dominant: scores[0].name
+    };
 }
 
 
@@ -109,7 +156,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await fetch(`${API_BASE}/conversations`, { headers });
       if (res.ok) {
-        const data = await res.json();
+        let data = await res.json();
+        if (data.length === 0) {
+          const createResponse = await fetch(`${API_BASE}/conversations`, { method: 'POST', headers });
+          if (createResponse.ok) {
+            const refreshResponse = await fetch(`${API_BASE}/conversations`, { headers });
+            if (refreshResponse.ok) data = await refreshResponse.json();
+          }
+        }
         setConversations(data);
         if (data.length > 0) {
           const savedId = localStorage.getItem('sakina_active_id_v3');
@@ -118,8 +172,6 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           } else {
             setActiveConvId(data[0].id);
           }
-        } else {
-          await startNewConversation();
         }
       } else {
         // Token invalid or expired
@@ -170,6 +222,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   };
 
   const switchConversation = (id: string) => {
+    localStorage.setItem('sakina_active_id_v3', id);
     setActiveConvId(id);
   };
 
@@ -192,22 +245,21 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   };
 
   const sendMessage = async (
-    text: string, 
-    lang: 'en' | 'ar', 
-    sendApiCall: (history: ChatMessage[], lang: string) => Promise<string>
-  ) => {
+    text: string,
+    lang: 'en' | 'ar'
+  ): Promise<string | null> => {
     const currentToken = localStorage.getItem('sakina_token');
-    if (!text.trim() || isTyping || !currentToken) return;
+    if (!text.trim() || isTyping || !currentToken) return null;
     const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentToken}` };
 
     const targetId = activeConversation.id;
     if (!targetId) {
       console.error("No active conversation ID found");
-      return;
+      return null;
     }
 
     const userMsg: ChatMessage = { id: Date.now(), isAi: false, textEn: text, textAr: text };
-    
+
     // Optimistic UI Update
     setConversations(prev => prev.map(c => {
       if (c.id !== targetId) return c;
@@ -225,32 +277,55 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       const newMood = calculateMoodFromMessages(currentMsgs);
 
       // Save user message to backend
-      await fetch(`${API_BASE}/conversations/${targetId}/messages`, {
+      const userSaveResponse = await fetch(`${API_BASE}/conversations/${targetId}/messages`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ isAi: false, textEn: text, textAr: text, mood: newMood, title: newTitle })
       });
+      if (!userSaveResponse.ok) throw new Error(`Could not save user message (${userSaveResponse.status})`);
 
-      // Get AI Response
-      const aiReply = await sendApiCall(currentMsgs, lang);
-      const aiMsg: ChatMessage = { id: Date.now() + 1, isAi: true, textEn: aiReply, textAr: aiReply };
+      // Get AI Response with full evidence metadata
+      const fullReply = await sendChatMessageFull(currentMsgs, lang, targetId);
+      const aiReply = fullReply.answer;
+      const aiMsg: ChatMessage = {
+        id: Date.now() + 1,
+        isAi: true,
+        textEn: aiReply,
+        textAr: aiReply,
+        sources: fullReply.sources,
+        retrieval: fullReply.retrieval,
+        safety: fullReply.safety,
+        citedRanks: fullReply.cited_ranks
+      };
 
-      // Optimistic UI Update for AI
-      setConversations(prev => prev.map(c => {
-        if (c.id !== targetId) return c;
-        const newMsgs2 = [...c.messages, aiMsg];
-        return { ...c, messages: newMsgs2, mood: calculateMoodFromMessages(newMsgs2) };
-      }));
-
-      // Save AI message to backend
-      await fetch(`${API_BASE}/conversations/${targetId}/messages`, {
+      // Save AI message to backend with full evidence and safety metadata
+      const aiSaveResponse = await fetch(`${API_BASE}/conversations/${targetId}/messages`, {
         method: 'POST',
         headers,
-        body: JSON.stringify({ isAi: true, textEn: aiReply, textAr: aiReply, mood: calculateMoodFromMessages([...currentMsgs, aiMsg]) })
+        body: JSON.stringify({
+          isAi: true,
+          textEn: aiReply,
+          textAr: aiReply,
+          mood: calculateMoodFromMessages([...currentMsgs, aiMsg]),
+          sources: fullReply.sources,
+          retrieval: fullReply.retrieval,
+          safety: fullReply.safety,
+          citedRanks: fullReply.cited_ranks
+        })
       });
+      if (!aiSaveResponse.ok) throw new Error(`Could not save AI message (${aiSaveResponse.status})`);
+
+      setConversations(prev => prev.map(c => {
+        if (c.id !== targetId) return c;
+        const newMsgs = [...c.messages, aiMsg];
+        return { ...c, messages: newMsgs, mood: calculateMoodFromMessages(newMsgs) };
+      }));
+
+      return aiReply;
 
     } catch (err) {
       console.error("Error sending message:", err);
+      return null;
     } finally {
       setIsTyping(false);
     }
@@ -281,3 +356,5 @@ export function useChatContext() {
   if (!ctx) throw new Error('useChatContext must be used within ChatProvider');
   return ctx;
 }
+
+export const useChat = useChatContext;

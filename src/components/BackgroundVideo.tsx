@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface BackgroundVideoProps {
   src: string;
@@ -25,45 +25,64 @@ function setupGlobalUnlock() {
 }
 
 export default function BackgroundVideo({ src, className = "", wrapperClassName = "" }: BackgroundVideoProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isInView, setIsInView] = useState(false);
 
+  // Lazy-load videos using IntersectionObserver so offscreen videos don't consume bandwidth
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const el = containerRef.current;
+    if (!el) return;
 
-    video.muted = true;
-    video.defaultMuted = true;
-    video.playsInline = true;
-    video.autoplay = true;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          setIsInView(entry.isIntersecting);
+          const video = videoRef.current;
+          if (!video) return;
 
-    const tryPlay = () => {
-      video.play().catch(() => {
-        pendingVideos.add(video);
-      });
-    };
+          if (entry.isIntersecting) {
+            video.play().catch(() => {
+              pendingVideos.add(video);
+            });
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { rootMargin: '200px 0px' }
+    );
 
-    tryPlay();
+    observer.observe(el);
     setupGlobalUnlock();
+    const video = videoRef.current;
 
     return () => {
-      pendingVideos.delete(video);
+      observer.disconnect();
+      if (video) {
+        pendingVideos.delete(video);
+      }
     };
-  }, [src]);
+  }, []);
 
   const isAbsolute = className.includes('absolute') || className.includes('inset-0');
 
   return (
-    <div className={wrapperClassName || (isAbsolute ? 'absolute inset-0' : 'relative w-full h-full')} style={{ overflow: 'hidden' }}>
+    <div
+      ref={containerRef}
+      className={wrapperClassName || (isAbsolute ? 'absolute inset-0' : 'relative w-full h-full')}
+      style={{ overflow: 'hidden' }}
+    >
       <video
         ref={videoRef}
-        src={src}
-        className={`w-full h-full object-cover pointer-events-none ${className}`}
+        src={isInView ? src : undefined}
+        className={`w-full h-full object-cover pointer-events-none transition-opacity duration-700 ${isInView ? 'opacity-100' : 'opacity-0'} ${className}`}
         controls={false}
         muted
         autoPlay
         playsInline
         loop
-        preload="auto"
+        preload="metadata"
         disablePictureInPicture
         disableRemotePlayback
       />

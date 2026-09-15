@@ -51,7 +51,7 @@ export default function Footer() {
               <input
                 type="email"
                 aria-label="Email address"
-                placeholder={lang === 'en' ? "you@company.com" : "بريدك الإلكتروني"}
+                placeholder={lang === 'en' ? "you@company.com" : "إيميلك"}
                 className="h-9 w-full rounded-md border border-white/20 bg-transparent px-3 text-sm text-white placeholder:text-white/40 focus:border-white/60 focus:outline-none"
               />
               <button

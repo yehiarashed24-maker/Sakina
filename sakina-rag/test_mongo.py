@@ -1,8 +1,11 @@
 import sys
+import os
 from pymongo import MongoClient
 import certifi
 
-MONGO_URI = "mongodb+srv://yehiarashed2004_db_user:PYQzkc2mUnCLesMW@cluster0.nykfh5s.mongodb.net/?appName=Cluster0"
+MONGO_URI = os.environ.get("MONGO_URI", "").strip()
+if not MONGO_URI:
+    raise SystemExit("MONGO_URI is not configured")
 
 try:
     client = MongoClient(MONGO_URI, tlsCAFile=certifi.where(), serverSelectionTimeoutMS=5000)

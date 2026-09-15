@@ -18,7 +18,7 @@ export default function FeaturedVideoSection() {
         className="w-full max-w-6xl rounded-3xl overflow-hidden aspect-video relative [perspective:1000px]"
       >
         <BackgroundVideo
-          src="/videos/featured-compressed.mp4"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260402_054547_9875cfc5-155a-4229-8ec8-b7ba7125cbf8.mp4"
           wrapperClassName="absolute inset-0"
           className="w-full h-full object-cover"
         />
